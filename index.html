@@ -45,6 +45,8 @@
   <footer class="center" id="footerContainer"></footer>
 </main>
 
+<div id="copySnackbar" class="snackbar"></div>
+
 <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@latest/dist/cdn/material-dynamic-colors.min.js"></script>
 <script>
@@ -512,6 +514,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const COLUMN_STRETCH_CLASS = "column stretch";
   /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
   const SNACKBAR_CLASS_NAME = "snackbar";
+  /** COPY_SNACKBAR_ID identifies the global snackbar element for copy confirmations. */
+  const COPY_SNACKBAR_ID = "copySnackbar";
   const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
   const COPY_BUTTON_LABEL = "Copy";
   /** COPY_SNACKBAR_MESSAGE is the text shown after a prompt is copied. */
@@ -686,20 +690,15 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       const copyLabel = `${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`;
       copyButtonElement.setAttribute(ATTRIBUTE_ARIA_LABEL, copyLabel);
       copyButtonElement.innerHTML = copyIcon() + `<span>${COPY_BUTTON_LABEL}</span>`;
-      copyButtonElement.onclick = () => copyPrompt(promptItem, cardElement);
+      copyButtonElement.onclick = () => copyPrompt(promptItem);
       actionsElement.appendChild(copyButtonElement);
 
       cardElement.appendChild(actionsElement);
 
-      const snackbarElement = document.createElement(TAG_DIV);
-      snackbarElement.className = SNACKBAR_CLASS_NAME;
-      snackbarElement.textContent = COPY_SNACKBAR_MESSAGE;
-      cardElement.appendChild(snackbarElement);
-
       cardElement.addEventListener(EVENT_KEYDOWN, event => {
         if (event.key === KEY_ENTER) {
           event.preventDefault();
-          copyPrompt(promptItem, cardElement);
+          copyPrompt(promptItem);
         }
       });
       return cardElement;
@@ -707,14 +706,14 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
 
   /**
    * copyPrompt writes a prompt's text to the clipboard and shows a snackbar message.
-   * @param {Object} promptItem prompt data to copy.
-   * @param {HTMLElement} cardElement associated card element.
-   * @returns {void}
-   */
-  function copyPrompt(promptItem, cardElement) {
+ * @param {Object} promptItem prompt data to copy.
+ * @returns {void}
+ */
+  function copyPrompt(promptItem) {
     const content = `${promptItem.text}`.trim();
     navigator.clipboard.writeText(sanitize(content)).then(() => {
-      const snackbarElement = selectOne(`.${SNACKBAR_CLASS_NAME}`, cardElement);
+      const snackbarElement = selectOne(`#${COPY_SNACKBAR_ID}`);
+      snackbarElement.textContent = COPY_SNACKBAR_MESSAGE;
       ui(SNACKBAR_CLASS_NAME, snackbarElement);
     }).catch(() => {
       const textareaElement = document.createElement("textarea");
@@ -796,7 +795,6 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     searchInputElement.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
     clearSearchButton.addEventListener(EVENT_CLICK, () => { searchInputElement.value = ""; searchInputElement.focus(); onSearch(""); });
     themeToggleButton.addEventListener(EVENT_CLICK, toggleTheme);
-    ui();
     window.addEventListener(EVENT_KEYDOWN, event => {
       if (event.key === KEY_SLASH && document.activeElement !== searchInputElement) {
         event.preventDefault();
