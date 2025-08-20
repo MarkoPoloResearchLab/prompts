@@ -7,6 +7,9 @@
   <meta name="color-scheme" content="dark light" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
+  <style>
+    .card-header { min-height: 7rem; }
+  </style>
   <script>
     const THEME_STORAGE_KEY = "preferred-theme";
     const LIGHT_THEME = "light";
@@ -508,6 +511,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLASS_BUTTON = "button";
   const CLASS_CHIPS = "chips";
   const CLASS_CHIP = "chip";
+  /** CARD_HEADER_CLASS groups a card's title and tags. */
+  const CARD_HEADER_CLASS = "card-header";
   /** GROW_CLASS expands a flex child to fill available vertical space. */
   const GROW_CLASS = "grow";
   /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
@@ -657,9 +662,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       contentElement.className = CLASS_CONTENT;
       contentElement.classList.add(GROW_CLASS);
 
+      const headerWrapperElement = document.createElement(TAG_DIV);
+      headerWrapperElement.className = CARD_HEADER_CLASS;
+
       const titleHeadingElement = document.createElement(TAG_H3);
       titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
-      contentElement.appendChild(titleHeadingElement);
+      headerWrapperElement.appendChild(titleHeadingElement);
 
       const chipContainerElement = document.createElement(TAG_DIV);
       chipContainerElement.className = CLASS_CHIPS;
@@ -669,10 +677,11 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
         chipElement.textContent = tagName;
         chipContainerElement.appendChild(chipElement);
       });
-      contentElement.appendChild(chipContainerElement);
+      headerWrapperElement.appendChild(chipContainerElement);
+      contentElement.appendChild(headerWrapperElement);
 
       const textWrapperElement = document.createElement(TAG_DIV);
-      textWrapperElement.className = GROW_CLASS;
+      textWrapperElement.classList.add(GROW_CLASS);
       const textElement = document.createElement(TAG_PRE);
       textElement.className = TEXT_CLASS;
       textElement.textContent = promptItem.text;
