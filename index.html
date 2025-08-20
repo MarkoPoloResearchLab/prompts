@@ -457,9 +457,22 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   ];
 
 
-  const state = { search:"", tag:"all" };
-  const $ = (s, r=document)=>r.querySelector(s);
-  const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+  const state = { search: "", tag: "all" };
+  const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
+  /**
+   * selectOne returns the first DOM element matching the selector.
+   * @param {string} selector CSS selector used to query the DOM.
+   * @param {ParentNode} [root=document] optional root element to scope the search.
+   * @returns {Element|null} first matching element or null.
+   */
+  const selectOne = (selector, root = document) => root.querySelector(selector);
+  /**
+   * selectAll returns all DOM elements matching the selector as an array.
+   * @param {string} selector CSS selector used to query the DOM.
+   * @param {ParentNode} [root=document] optional root element to scope the search.
+   * @returns {Element[]} array of matching elements.
+   */
+  const selectAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const debounce=(fn,ms=120)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
   const sanitize=(s)=>s.replace(/\r/g,'');
   const matches=(item,q,tag)=>{
@@ -472,24 +485,36 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     const t=new Set(); PROMPTS.forEach(p=>p.tags.forEach(tag=>t.add(tag)));
     return ["all",...Array.from(t).sort((a,b)=>a.localeCompare(b))];
   }
-  function renderChips(){
-    const bar=$("#chipBar"); bar.innerHTML="";
-    uniqueTags().forEach(tag=>{
-      const chip=document.createElement("button");
-      chip.className="chip"; chip.type="button"; chip.textContent=tag;
-      chip.setAttribute("data-active", tag===state.tag ? "true":"false");
-      chip.onclick=()=>{ state.tag=tag; persist(); renderGrid(); highlightActiveChip(); };
-      bar.appendChild(chip);
+  function renderChips() {
+    const chipBarElement = selectOne("#chipBar");
+    chipBarElement.innerHTML = "";
+    uniqueTags().forEach(tag => {
+      const chip = document.createElement("button");
+      chip.className = "chip"; chip.type = "button"; chip.textContent = tag;
+      chip.setAttribute("data-active", tag === state.tag ? "true" : "false");
+      chip.onclick = () => { state.tag = tag; persistState(); renderGrid(); highlightActiveChip(); };
+      chipBarElement.appendChild(chip);
     });
   }
-  function highlightActiveChip(){ $$("#chipBar .chip").forEach(c=>c.setAttribute("data-active", String(c.textContent===state.tag))); }
+  function highlightActiveChip() {
+    selectAll("#chipBar .chip").forEach(chipElement =>
+      chipElement.setAttribute("data-active", String(chipElement.textContent === state.tag))
+    );
+  }
 
-  function renderGrid(){
-    const grid=$("#grid"); const q=state.search.trim().toLowerCase();
-    const items=PROMPTS.filter(p=>matches(p,q,state.tag));
-    grid.innerHTML="";
-    items.forEach(item=>grid.appendChild(createCard(item)));
-    if(items.length===0){ const p=document.createElement("p"); p.style.color="var(--text-1)"; p.style.gridColumn="1/-1"; p.textContent="No prompts match your search/filter."; grid.appendChild(p); }
+  function renderGrid() {
+    const gridElement = selectOne("#grid");
+    const query = state.search.trim().toLowerCase();
+    const items = PROMPTS.filter(p => matches(p, query, state.tag));
+    gridElement.innerHTML = "";
+    items.forEach(item => gridElement.appendChild(createCard(item)));
+    if (items.length === 0) {
+      const paragraph = document.createElement("p");
+      paragraph.style.color = "var(--text-1)";
+      paragraph.style.gridColumn = "1/-1";
+      paragraph.textContent = "No prompts match your search/filter.";
+      gridElement.appendChild(paragraph);
+    }
   }
 
   function createCard(item){
@@ -512,25 +537,54 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
 
     const toast=document.createElement("div"); toast.className="copied"; toast.textContent="Copied ✓"; card.appendChild(toast);
 
-    card.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); copyPrompt(item,card); }});
+    card.addEventListener("keydown", event => {
+      if (event.key === "Enter") { event.preventDefault(); copyPrompt(item, card); }
+    });
     return card;
   }
 
-  function copyPrompt(item,card){
-    const content=`${item.text}`.trim();
-    navigator.clipboard.writeText(sanitize(content)).then(()=>{
-      const toast=$(".copied",card); toast.setAttribute("data-show","true"); setTimeout(()=>toast.setAttribute("data-show","false"),1200);
-    }).catch(()=>{
-      const ta=document.createElement("textarea"); ta.value=content; ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta);
-      ta.select(); document.execCommand("copy"); ta.remove();
+  function copyPrompt(item, card) {
+    const content = `${item.text}`.trim();
+    navigator.clipboard.writeText(sanitize(content)).then(() => {
+      const toastElement = selectOne(".copied", card);
+      toastElement.setAttribute("data-show", "true");
+      setTimeout(() => toastElement.setAttribute("data-show", "false"), 1200);
+    }).catch(() => {
+      const textareaElement = document.createElement("textarea");
+      textareaElement.value = content;
+      textareaElement.style.position = "fixed";
+      textareaElement.style.left = "-9999px";
+      document.body.appendChild(textareaElement);
+      textareaElement.select();
+      document.execCommand("copy");
+      textareaElement.remove();
     });
   }
   function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
   function escapeHTML(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 
-  const onSearch = debounce((v)=>{ state.search=v; persist(); renderGrid(); },80);
-  function persist(){ try{ localStorage.setItem("prompt-bubbles-state", JSON.stringify(state)); }catch{} }
-  function restore(){ try{ const raw=localStorage.getItem("prompt-bubbles-state"); if(raw){ const p=JSON.parse(raw); if(typeof p.search==="string") state.search=p.search; if(typeof p.tag==="string") state.tag=p.tag; } }catch{} }
+  const onSearch = debounce(value => { state.search = value; persistState(); renderGrid(); }, 80);
+  /**
+   * persistState saves the current search and tag state in localStorage.
+   */
+  function persistState() {
+    try {
+      localStorage.setItem(STORAGE_KEY_PROMPT_STATE, JSON.stringify(state));
+    } catch {}
+  }
+  /**
+   * restoreState loads persisted search and tag state from localStorage.
+   */
+  function restoreState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_PROMPT_STATE);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed.search === "string") state.search = parsed.search;
+        if (typeof parsed.tag === "string") state.tag = parsed.tag;
+      }
+    } catch {}
+  }
 
   /** toggleTheme switches between light and dark themes. */
   function toggleTheme() {
@@ -540,14 +594,24 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   }
 
   /** init prepares interactive elements. */
-  function init(){
-    restore(); renderChips(); renderGrid();
-    const input=$("#searchInput"), clear=$("#clearSearch"), themeButton=$("#themeToggle");
-    input.value=state.search;
-    input.addEventListener("input",(e)=>onSearch(e.target.value));
-    clear.addEventListener("click",()=>{ input.value=""; input.focus(); onSearch(""); });
+  function init() {
+    restoreState();
+    renderChips();
+    renderGrid();
+    const inputElement = selectOne("#searchInput"),
+          clearButton = selectOne("#clearSearch"),
+          themeButton = selectOne("#themeToggle");
+    inputElement.value = state.search;
+    inputElement.addEventListener("input", event => onSearch(event.target.value));
+    clearButton.addEventListener("click", () => { inputElement.value = ""; inputElement.focus(); onSearch(""); });
     themeButton.addEventListener("click", toggleTheme);
-    window.addEventListener("keydown",(e)=>{ if(e.key==="/" && document.activeElement!==input){ e.preventDefault(); input.focus(); input.select(); }});
+    window.addEventListener("keydown", event => {
+      if (event.key === "/" && document.activeElement !== inputElement) {
+        event.preventDefault();
+        inputElement.focus();
+        inputElement.select();
+      }
+    });
   }
   document.addEventListener("DOMContentLoaded", init);
 </script>
