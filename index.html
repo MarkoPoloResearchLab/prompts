@@ -515,12 +515,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const END_ALIGNMENT_CLASS = "end";
   /** CARD_HEADER_CLASS groups a card's title and tags. */
   const CARD_HEADER_CLASS = "card-header";
+  /** CARD_HEADER_MIN_HEIGHT_CLASS reserves consistent vertical space for card titles. */
+  const CARD_HEADER_MIN_HEIGHT_CLASS = "min-h-48";
   /** GROW_CLASS expands a flex child to fill available vertical space. */
   const GROW_CLASS = "grow";
   /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
   const COLUMN_STRETCH_CLASS = "column stretch";
-  /** CARD_HEADER_CLASS reserves consistent vertical space for card titles. */
-  const CARD_HEADER_CLASS = "min-h-48";
   /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
   const SNACKBAR_CLASS_NAME = "snackbar";
   /** COPY_SNACKBAR_ID identifies the global snackbar element for copy confirmations. */
@@ -667,7 +667,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       contentElement.classList.add(GROW_CLASS);
 
       const headerWrapperElement = document.createElement(TAG_DIV);
-      headerWrapperElement.className = CARD_HEADER_CLASS;
+      headerWrapperElement.classList.add(CARD_HEADER_CLASS, CARD_HEADER_MIN_HEIGHT_CLASS);
 
       const titleHeadingElement = document.createElement(TAG_H3);
       titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
