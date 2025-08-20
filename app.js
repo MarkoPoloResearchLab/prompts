@@ -24,6 +24,7 @@ const CLASS_ACTIONS = "actions";
 const CLASS_BUTTON = "button";
 const CLASS_CHIPS = "chips";
 const CLASS_CHIP = "chip";
+const CLASS_SMALL = "small";
 const GRID_ITEM_CLASSES = "s12 m6 l4";
 const TEXT_CLASS = "text";
 const CLASS_PROMPT_BODY = "prompt-body";
@@ -86,6 +87,9 @@ function uniqueTags() {
     return [TAG_ALL, ...Array.from(s).sort((a, b) => a.localeCompare(b))];
 }
 
+/**
+ * renderChips builds the tag filter buttons and binds their click handlers.
+ */
 function renderChips() {
     const host = selectOne("#chipBar");
     host.innerHTML = "";
@@ -93,7 +97,7 @@ function renderChips() {
     wrap.className = CLASS_CHIPS;
     uniqueTags().forEach(tagName => {
         const chip = document.createElement("button");
-        chip.className = CLASS_CHIP;
+        chip.className = `${CLASS_CHIP} ${CLASS_SMALL}`;
         chip.type = "button";
         chip.textContent = tagName;
         chip.setAttribute("data-active", tagName === state.tag ? "true" : "false");
