@@ -484,7 +484,10 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
    */
   const selectAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const debounce=(fn,ms=120)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
-  const sanitize=(s)=>s.replace(/\r/g,'');
+  const CARRIAGE_RETURN_PATTERN = /\r/g;
+  const EMPTY_STRING = "";
+  /** sanitize removes carriage return characters from text. */
+  const sanitize = (inputText) => inputText.replace(CARRIAGE_RETURN_PATTERN, EMPTY_STRING);
   const matches=(item,q,tag)=>{
     const tagOk = tag==="all" || item.tags.includes(tag);
     if(!q) return tagOk;
@@ -580,7 +583,16 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     });
   }
   function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
-  function escapeHTML(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  const HTML_ESCAPE_PATTERN = /[&<>"']/g;
+  const HTML_ESCAPE_REPLACEMENTS = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  };
+  /** escapeHTML converts reserved HTML characters to escape sequences. */
+  function escapeHTML(rawText){ return rawText.replace(HTML_ESCAPE_PATTERN, character => HTML_ESCAPE_REPLACEMENTS[character]); }
 
   const onSearch = debounce(value => { state.search = value; persistState(); renderGrid(); }, 80);
   /**
