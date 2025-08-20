@@ -3,13 +3,11 @@ article.card {
     flex-direction: column;
 }
 
-article.card > .content {
-    flex: 1 1 auto;
-}
-
-article.card > nav.actions {
-    margin-top: auto;
-    justify-content: flex-end;
+.prompt-body {
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 #themeIcon.jump {

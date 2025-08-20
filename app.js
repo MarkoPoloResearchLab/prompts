@@ -26,6 +26,10 @@ const CLASS_CHIPS = "chips";
 const CLASS_CHIP = "chip";
 const GRID_ITEM_CLASSES = "s12 m6 l4";
 const TEXT_CLASS = "text";
+const CLASS_PROMPT_BODY = "prompt-body";
+const CLASS_GROW = "grow";
+const CLASS_COLUMN = "column";
+const CLASS_ROW_END = "row end";
 
 const SNACKBAR_CLASS_NAME = "snackbar";
 const COPY_SNACKBAR_ID = "copySnackbar";
@@ -129,6 +133,9 @@ function renderGrid() {
     }
 }
 
+/**
+ * createCard constructs a prompt card with header, tags, body, and actions.
+ */
 function createCard(p) {
     const card = document.createElement("article");
     card.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES}`;
@@ -136,38 +143,36 @@ function createCard(p) {
     card.tabIndex = 0;
 
     const content = document.createElement("div");
-    content.className = CLASS_CONTENT;
+    content.className = `${CLASS_CONTENT} ${CLASS_GROW} ${CLASS_COLUMN}`;
 
-    // header
-    const header = document.createElement("div");
-    const h3 = document.createElement("h3");
-    h3.innerHTML = escapeHTML(p.title);
-    header.appendChild(h3);
-
-    const chips = document.createElement("div");
-    chips.className = CLASS_CHIPS;
-    p.tags.forEach(tag => {
-        const c = document.createElement("div");
-        c.className = CLASS_CHIP;
-        c.textContent = tag;
-        chips.appendChild(c);
-    });
-    header.appendChild(chips);
+    const header = document.createElement("header");
+    const title = document.createElement("h3");
+    title.innerHTML = escapeHTML(p.title);
+    header.appendChild(title);
     content.appendChild(header);
 
-    // body text (wraps naturally)
+    const tags = document.createElement("div");
+    tags.className = CLASS_CHIPS;
+    p.tags.forEach(tag => {
+        const chip = document.createElement("div");
+        chip.className = CLASS_CHIP;
+        chip.textContent = tag;
+        tags.appendChild(chip);
+    });
+    content.appendChild(tags);
+
     const bodyWrap = document.createElement("div");
+    bodyWrap.className = CLASS_GROW;
     const body = document.createElement("div");
-    body.className = TEXT_CLASS;
+    body.className = `${TEXT_CLASS} ${CLASS_PROMPT_BODY}`;
     body.innerHTML = withLineBreaks(p.text);
     bodyWrap.appendChild(body);
     content.appendChild(bodyWrap);
 
     card.appendChild(content);
 
-    // 3) Actions pinned bottom-right by tiny CSS above
     const actions = document.createElement("nav");
-    actions.className = `${CLASS_ACTIONS}`;
+    actions.className = `${CLASS_ACTIONS} ${CLASS_ROW_END}`;
 
     const copyBtn = document.createElement("button");
     copyBtn.className = CLASS_BUTTON;
