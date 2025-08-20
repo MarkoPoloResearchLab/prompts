@@ -7,9 +7,6 @@
   <meta name="color-scheme" content="dark light" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
-  <style>
-    .card-header { min-height: 7rem; }
-  </style>
   <script>
     const THEME_STORAGE_KEY = "preferred-theme";
     const LIGHT_THEME = "light";
@@ -513,8 +510,6 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLASS_CHIP = "chip";
   /** END_ALIGNMENT_CLASS aligns elements to the end of a flex container. */
   const END_ALIGNMENT_CLASS = "end";
-  /** CARD_HEADER_CLASS groups a card's title and tags. */
-  const CARD_HEADER_CLASS = "card-header";
   /** GROW_CLASS expands a flex child to fill available vertical space. */
   const GROW_CLASS = "grow";
   /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
@@ -667,7 +662,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       contentElement.classList.add(GROW_CLASS);
 
       const headerWrapperElement = document.createElement(TAG_DIV);
-      headerWrapperElement.className = CARD_HEADER_CLASS;
+      headerWrapperElement.classList.add(CARD_HEADER_CLASS);
 
       const titleHeadingElement = document.createElement(TAG_H3);
       titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
