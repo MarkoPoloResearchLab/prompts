@@ -21,16 +21,18 @@
   </script>
 </head>
 <body class="light">
-<main class="responsive padding">
-  <nav class="row max center" role="region" aria-label="Search">
+  <header class="top appbar">
     <div class="field prefix suffix round">
+      <span class="material-symbols-outlined">search</span>
       <span class="material-symbols-outlined" aria-hidden="true">search</span>
       <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-      <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search">✕</button>
+      <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
     </div>
+    <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+  </header>
+<main class="responsive padding">
     <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme" data-ui="dark icon"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
   </nav>
-
   <header>
     <div id="headerContainer" aria-label="Site header">
       <span id="headerIcon" class="material-symbols-outlined" aria-hidden="true">bubble_chart</span>
