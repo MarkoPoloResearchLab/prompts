@@ -1,8 +1,7 @@
-import { PROMPTS as PROMPTS_DATA } from './prompts.js';
-
 const THEME_STORAGE_KEY = "preferred-theme";
 const LIGHT_THEME = "light";
 const DARK_THEME = "dark";
+const PROMPTS_JSON_PATH = "prompts.json";
 
 function initializeTheme() {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
@@ -59,8 +58,15 @@ const escapeHTML = raw => raw.replace(/[&<>\"']/g, ch => ({
 }[ch]));
 const withLineBreaks = raw => escapeHTML(raw).replace(/\n/g, "<br>");
 
-// ---------- Data (unchanged) ----------
-let PROMPTS = PROMPTS_DATA;
+/**
+ * loadPrompts retrieves the prompt definitions from the JSON file.
+ */
+async function loadPrompts() {
+    const response = await fetch(PROMPTS_JSON_PATH);
+    return await response.json();
+}
+
+let PROMPTS = [];
 // ---------- UI builders ----------
 function uniqueTags() {
     const s = new Set();
@@ -236,27 +242,32 @@ function toggleThemeViaSwitch() {
     setThemeControls(next);
 }
 
-// ---------- Init ----------
-document.addEventListener(EVENT_DOM_CONTENT_LOADED, () => {
+/**
+ * initializeApplication configures theme, restores state, loads prompts, and binds event handlers.
+ */
+async function initializeApplication() {
     const activeTheme = initializeTheme();
     setThemeControls(activeTheme);
 
     restoreState();
+    PROMPTS = await loadPrompts();
     renderChips();
     renderGrid();
 
-    const input = selectOne("#searchInput");
-    input.value = state.search;
-    input.addEventListener(EVENT_INPUT, e => onSearch(e.target.value));
+    const searchInput = selectOne("#searchInput");
+    searchInput.value = state.search;
+    searchInput.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
     selectOne("#themeSwitch").addEventListener(EVENT_CLICK, toggleThemeViaSwitch);
 
-    window.addEventListener(EVENT_KEYDOWN, e => {
-        if (e.key === KEY_SLASH && document.activeElement !== input) {
-            e.preventDefault();
-            input.focus();
-            input.select();
+    window.addEventListener(EVENT_KEYDOWN, event => {
+        if (event.key === KEY_SLASH && document.activeElement !== searchInput) {
+            event.preventDefault();
+            searchInput.focus();
+            searchInput.select();
         }
     });
 
-    ui(); // reapply Beer styles
-});
+    ui();
+}
+
+document.addEventListener(EVENT_DOM_CONTENT_LOADED, initializeApplication);
