@@ -7,6 +7,9 @@
   <meta name="color-scheme" content="dark light" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
+  <style>
+    .uniform-card { height: 360px; display: flex; flex-direction: column; }
+  </style>
   <script>
     const THEME_STORAGE_KEY = "preferred-theme";
     const LIGHT_THEME = "light";
@@ -498,6 +501,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const state = { search: "", tag: TAG_ALL };
   const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
   const CLASS_CARD = "card";
+  /** UNIFORM_CARD_CLASS enforces consistent sizing and layout for cards. */
+  const UNIFORM_CARD_CLASS = "uniform-card";
   /** GRID_ITEM_CLASSES defines responsive column spans for cards. */
   const GRID_ITEM_CLASSES = "s12 m6 l4";
   const CLASS_CONTENT = "content";
@@ -513,6 +518,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CARD_HEADER_MIN_HEIGHT_CLASS = "min-h-48";
   /** GROW_CLASS expands a flex child to fill available vertical space. */
   const GROW_CLASS = "grow";
+  /** FLEX_EXPAND_VALUE assigns flex:1 to an element. */
+  const FLEX_EXPAND_VALUE = "1";
   /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
   const COLUMN_STRETCH_CLASS = "column stretch";
   /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
@@ -649,16 +656,17 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     }
   }
 
-    /** createCard builds a card element for a prompt. */
+    /** createCard builds a uniform-height card element for a prompt. */
     function createCard(promptItem) {
       const cardElement = document.createElement(TAG_ARTICLE);
-      cardElement.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES} ${COLUMN_STRETCH_CLASS}`;
+      cardElement.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES} ${COLUMN_STRETCH_CLASS} ${UNIFORM_CARD_CLASS}`;
       cardElement.setAttribute(ATTRIBUTE_ROLE, ROLE_LIST_ITEM);
       cardElement.tabIndex = 0;
 
       const contentElement = document.createElement(TAG_DIV);
       contentElement.className = CLASS_CONTENT;
       contentElement.classList.add(GROW_CLASS);
+      contentElement.style.flex = FLEX_EXPAND_VALUE;
 
       const headerWrapperElement = document.createElement(TAG_DIV);
       headerWrapperElement.classList.add(CARD_HEADER_CLASS, CARD_HEADER_MIN_HEIGHT_CLASS);
@@ -680,6 +688,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
 
       const textWrapperElement = document.createElement(TAG_DIV);
       textWrapperElement.classList.add(GROW_CLASS);
+      textWrapperElement.style.flex = FLEX_EXPAND_VALUE;
       const textElement = document.createElement(TAG_PRE);
       textElement.className = TEXT_CLASS;
       textElement.textContent = promptItem.text;
