@@ -1,6 +1,6 @@
 # Prompt Bubbles
 
-Prompt Bubbles is a static website that presents a curated collection of ChatGPT prompts. The interface is contained in a single HTML file and allows filtering and copying of prompts directly in the browser.
+Prompt Bubbles is a static website that presents a curated collection of ChatGPT prompts. The interface now uses an HTML page with separate JavaScript and CSS files, allowing filtering and copying of prompts directly in the browser.
 
 ## License
 

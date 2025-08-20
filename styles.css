@@ -1,0 +1,13 @@
+article.card {
+    display: flex;
+    flex-direction: column;
+}
+
+article.card > .content {
+    flex: 1 1 auto;
+}
+
+article.card > nav.actions {
+    margin-top: auto;
+    justify-content: flex-end;
+}
