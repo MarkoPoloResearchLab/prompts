@@ -37,7 +37,7 @@
       <h1>Prompt Bubbles</h1>
     </div>
     <p class="subtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
-    <div class="chips" id="chipBar" aria-label="Tag filters"></div>
+    <div id="chipBar" aria-label="Tag filters"></div>
   </header>
 
   <main>
@@ -459,6 +459,16 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
 
   const state = { search: "", tag: "all" };
   const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
+  const CLASS_CARD = "card";
+  const CLASS_CONTENT = "content";
+  const CLASS_ACTIONS = "actions";
+  const CLASS_BUTTON = "button";
+  const CLASS_CHIPS = "chips";
+  const CLASS_CHIP = "chip";
+  const CLASS_COPIED = "copied";
+  const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
+  const COPY_BUTTON_LABEL = "Copy";
+  const COPIED_TOAST_MESSAGE = "Copied \u2713";
   /**
    * selectOne returns the first DOM element matching the selector.
    * @param {string} selector CSS selector used to query the DOM.
@@ -485,19 +495,25 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     const t=new Set(); PROMPTS.forEach(p=>p.tags.forEach(tag=>t.add(tag)));
     return ["all",...Array.from(t).sort((a,b)=>a.localeCompare(b))];
   }
+  /** renderChips populates the tag filter bar with chip buttons. */
   function renderChips() {
     const chipBarElement = selectOne("#chipBar");
     chipBarElement.innerHTML = "";
-    uniqueTags().forEach(tag => {
-      const chip = document.createElement("button");
-      chip.className = "chip"; chip.type = "button"; chip.textContent = tag;
-      chip.setAttribute("data-active", tag === state.tag ? "true" : "false");
-      chip.onclick = () => { state.tag = tag; persistState(); renderGrid(); highlightActiveChip(); };
-      chipBarElement.appendChild(chip);
+    const chipContainerElement = document.createElement("div");
+    chipContainerElement.className = CLASS_CHIPS;
+    uniqueTags().forEach(tagName => {
+      const chipButtonElement = document.createElement("button");
+      chipButtonElement.className = CLASS_CHIP;
+      chipButtonElement.type = "button";
+      chipButtonElement.textContent = tagName;
+      chipButtonElement.setAttribute("data-active", tagName === state.tag ? "true" : "false");
+      chipButtonElement.onclick = () => { state.tag = tagName; persistState(); renderGrid(); highlightActiveChip(); };
+      chipContainerElement.appendChild(chipButtonElement);
     });
+    chipBarElement.appendChild(chipContainerElement);
   }
   function highlightActiveChip() {
-    selectAll("#chipBar .chip").forEach(chipElement =>
+    selectAll(`#chipBar .${CLASS_CHIP}`).forEach(chipElement =>
       chipElement.setAttribute("data-active", String(chipElement.textContent === state.tag))
     );
   }
@@ -517,36 +533,39 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     }
   }
 
-  function createCard(item){
-    const card=document.createElement("article"); card.className="card"; card.setAttribute("role","listitem"); card.tabIndex=0;
+    /** createCard builds a card element for a prompt. */
+    function createCard(item){
+      const cardElement=document.createElement("article"); cardElement.className=CLASS_CARD; cardElement.setAttribute("role","listitem"); cardElement.tabIndex=0;
 
-    const header=document.createElement("div"); header.className="card-header";
-    header.innerHTML=`<span class="tag-dot" aria-hidden="true"></span><h3 class="card-title">${escapeHTML(item.title)}</h3>`;
-    card.appendChild(header);
+      const contentElement=document.createElement("div"); contentElement.className=CLASS_CONTENT;
+      const titleContainer=document.createElement("div");
+      titleContainer.innerHTML=`<span class="tag-dot" aria-hidden="true"></span><h3>${escapeHTML(item.title)}</h3>`;
+      contentElement.appendChild(titleContainer);
 
-    const tags=document.createElement("div"); tags.className="card-tags";
-    item.tags.forEach(t=>{ const el=document.createElement("span"); el.className="tag"; el.textContent=t; tags.appendChild(el); });
-    card.appendChild(tags);
+      const tagContainerElement=document.createElement("div"); tagContainerElement.className=CLASS_CHIPS;
+      item.tags.forEach(tagName=>{ const tagChipElement=document.createElement("div"); tagChipElement.className=CLASS_CHIP; tagChipElement.textContent=tagName; tagContainerElement.appendChild(tagChipElement); });
+      contentElement.appendChild(tagContainerElement);
 
-    const text=document.createElement("pre"); text.className="card-text"; text.textContent=item.text; card.appendChild(text);
+      const textElement=document.createElement("pre"); textElement.textContent=item.text; contentElement.appendChild(textElement);
+      cardElement.appendChild(contentElement);
 
-    const actions=document.createElement("div"); actions.className="card-actions";
-    const btn=document.createElement("button"); btn.className="btn"; btn.type="button"; btn.setAttribute("aria-label",`Copy prompt: ${item.title}`);
-    btn.innerHTML=copyIcon()+`<span>Copy</span>`; btn.onclick=()=>copyPrompt(item,card);
-    actions.appendChild(btn); card.appendChild(actions);
+      const actionsElement=document.createElement("nav"); actionsElement.className=CLASS_ACTIONS;
+      const copyButtonElement=document.createElement("button"); copyButtonElement.className=CLASS_BUTTON; copyButtonElement.type="button"; copyButtonElement.setAttribute("aria-label",`${COPY_PROMPT_LABEL_PREFIX} ${item.title}`);
+      copyButtonElement.innerHTML=copyIcon()+`<span>${COPY_BUTTON_LABEL}</span>`; copyButtonElement.onclick=()=>copyPrompt(item,cardElement);
+      actionsElement.appendChild(copyButtonElement); cardElement.appendChild(actionsElement);
 
-    const toast=document.createElement("div"); toast.className="copied"; toast.textContent="Copied ✓"; card.appendChild(toast);
+      const toastElement=document.createElement("div"); toastElement.className=CLASS_COPIED; toastElement.textContent=COPIED_TOAST_MESSAGE; cardElement.appendChild(toastElement);
 
-    card.addEventListener("keydown", event => {
-      if (event.key === "Enter") { event.preventDefault(); copyPrompt(item, card); }
-    });
-    return card;
-  }
+      cardElement.addEventListener("keydown", event => {
+        if (event.key === "Enter") { event.preventDefault(); copyPrompt(item, cardElement); }
+      });
+      return cardElement;
+    }
 
   function copyPrompt(item, card) {
     const content = `${item.text}`.trim();
     navigator.clipboard.writeText(sanitize(content)).then(() => {
-      const toastElement = selectOne(".copied", card);
+      const toastElement = selectOne(`.${CLASS_COPIED}`, card);
       toastElement.setAttribute("data-show", "true");
       setTimeout(() => toastElement.setAttribute("data-show", "false"), 1200);
     }).catch(() => {
