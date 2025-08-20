@@ -31,7 +31,6 @@
       <div class="field prefix suffix round grow" id="searchContainer" style="width:100%">
         <i class="material-symbols-outlined icon prefix" aria-hidden="true">search</i>
         <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-        <button class="icon suffix" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
       </div>
       <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
     </div>
@@ -797,11 +796,9 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     renderChips();
     renderGrid();
     const searchInputElement = selectOne("#searchInput"),
-          clearSearchButton = selectOne("#clearSearch"),
           themeToggleButton = selectOne(`#${THEME_TOGGLE_BUTTON_ID}`);
     searchInputElement.value = state.search;
     searchInputElement.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
-    clearSearchButton.addEventListener(EVENT_CLICK, () => { searchInputElement.value = ""; searchInputElement.focus(); onSearch(""); });
     themeToggleButton.addEventListener(EVENT_CLICK, toggleTheme);
     window.addEventListener(EVENT_KEYDOWN, event => {
       if (event.key === KEY_SLASH && document.activeElement !== searchInputElement) {
