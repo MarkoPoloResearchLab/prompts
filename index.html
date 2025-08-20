@@ -26,10 +26,10 @@
 <body class="light">
   <header class="top appbar">
     <nav>
-      <div class="field prefix suffix round">
-        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+      <div class="field prefix suffix round grow">
+        <span class="material-symbols-outlined icon prefix" aria-hidden="true">search</span>
         <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-        <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
+        <button class="icon suffix" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
       </div>
       <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
     </nav>
@@ -814,7 +814,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       }
     });
   }
-  document.addEventListener(EVENT_DOM_CONTENT_LOADED, init);
+  /** onContentLoaded initializes components then reapplies Beer.css styling. */
+  function onContentLoaded() {
+    init();
+    ui();
+  }
+  document.addEventListener(EVENT_DOM_CONTENT_LOADED, onContentLoaded);
 </script>
 </body>
 </html>
