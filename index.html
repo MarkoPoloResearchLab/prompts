@@ -494,6 +494,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const state = { search: "", tag: TAG_ALL };
   const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
   const CLASS_CARD = "card";
+  /** GRID_ITEM_CLASSES defines responsive column spans for cards. */
+  const GRID_ITEM_CLASSES = "s12 m6 l4";
   const CLASS_CONTENT = "content";
   const CLASS_ACTIONS = "actions";
   const CLASS_BUTTON = "button";
@@ -632,7 +634,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     /** createCard builds a card element for a prompt. */
     function createCard(promptItem) {
       const cardElement = document.createElement(TAG_ARTICLE);
-      cardElement.className = CLASS_CARD;
+      cardElement.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES}`;
       cardElement.setAttribute(ATTRIBUTE_ROLE, ROLE_LIST_ITEM);
       cardElement.tabIndex = 0;
 
