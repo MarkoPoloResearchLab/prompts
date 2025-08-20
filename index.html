@@ -457,7 +457,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   ];
 
 
-  const state = { search: "", tag: "all" };
+  const TAG_ALL = "all";
+  const state = { search: "", tag: TAG_ALL };
   const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
   const CLASS_CARD = "card";
   const CLASS_CONTENT = "content";
@@ -469,6 +470,9 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
   const COPY_BUTTON_LABEL = "Copy";
   const COPIED_TOAST_MESSAGE = "Copied \u2713";
+  const DATA_ACTIVE_ATTRIBUTE = "data-active";
+  const DATA_SHOW_ATTRIBUTE = "data-show";
+  const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
   /**
    * selectOne returns the first DOM element matching the selector.
    * @param {string} selector CSS selector used to query the DOM.
@@ -483,20 +487,44 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
    * @returns {Element[]} array of matching elements.
    */
   const selectAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-  const debounce=(fn,ms=120)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+  /**
+   * debounce delays invoking the provided function until after a wait period.
+   * @param {Function} targetFunction function to debounce.
+   * @param {number} [delayMilliseconds=120] delay duration in milliseconds.
+   * @returns {Function} debounced wrapper function.
+   */
+  const debounce = (targetFunction, delayMilliseconds = 120) => {
+    let timeoutIdentifier;
+    return (...functionArguments) => {
+      clearTimeout(timeoutIdentifier);
+      timeoutIdentifier = setTimeout(() => targetFunction(...functionArguments), delayMilliseconds);
+    };
+  };
   const CARRIAGE_RETURN_PATTERN = /\r/g;
   const EMPTY_STRING = "";
   /** sanitize removes carriage return characters from text. */
   const sanitize = (inputText) => inputText.replace(CARRIAGE_RETURN_PATTERN, EMPTY_STRING);
-  const matches=(item,q,tag)=>{
-    const tagOk = tag==="all" || item.tags.includes(tag);
-    if(!q) return tagOk;
-    const hay=(item.title+" "+item.text+" "+item.tags.join(" ")).toLowerCase();
-    return tagOk && q.split(/\s+/).every(tok=>hay.includes(tok));
+  /**
+   * matches determines if a prompt satisfies the search query and selected tag.
+   * @param {Object} promptItem prompt to evaluate.
+   * @param {string} query search string in lowercase.
+   * @param {string} tagName chosen tag filter.
+   * @returns {boolean} true when the prompt matches both filters.
+   */
+  const matches = (promptItem, query, tagName) => {
+    const tagIsAllowed = tagName === TAG_ALL || promptItem.tags.includes(tagName);
+    if (!query) return tagIsAllowed;
+    const combinedText = (promptItem.title + " " + promptItem.text + " " + promptItem.tags.join(" ")).toLowerCase();
+    return tagIsAllowed && query.split(/\s+/).every(searchToken => combinedText.includes(searchToken));
   };
+  /**
+   * uniqueTags gathers all distinct tags from the prompts list.
+   * @returns {string[]} array beginning with the all tag followed by sorted tags.
+   */
   function uniqueTags(){
-    const t=new Set(); PROMPTS.forEach(p=>p.tags.forEach(tag=>t.add(tag)));
-    return ["all",...Array.from(t).sort((a,b)=>a.localeCompare(b))];
+    const tagSet = new Set();
+    PROMPTS.forEach(promptItem => promptItem.tags.forEach(tagName => tagSet.add(tagName)));
+    return [TAG_ALL, ...Array.from(tagSet).sort((tagA, tagB) => tagA.localeCompare(tagB))];
   }
   /** renderChips populates the tag filter bar with chip buttons. */
   function renderChips() {
@@ -509,30 +537,38 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       chipButtonElement.className = CLASS_CHIP;
       chipButtonElement.type = "button";
       chipButtonElement.textContent = tagName;
-      chipButtonElement.setAttribute("data-active", tagName === state.tag ? "true" : "false");
+      chipButtonElement.setAttribute(DATA_ACTIVE_ATTRIBUTE, tagName === state.tag ? "true" : "false");
       chipButtonElement.onclick = () => { state.tag = tagName; persistState(); renderGrid(); highlightActiveChip(); };
       chipContainerElement.appendChild(chipButtonElement);
     });
     chipBarElement.appendChild(chipContainerElement);
   }
+  /**
+   * highlightActiveChip updates the visual state of the selected tag chip.
+   * @returns {void}
+   */
   function highlightActiveChip() {
     selectAll(`#chipBar .${CLASS_CHIP}`).forEach(chipElement =>
-      chipElement.setAttribute("data-active", String(chipElement.textContent === state.tag))
+      chipElement.setAttribute(DATA_ACTIVE_ATTRIBUTE, String(chipElement.textContent === state.tag))
     );
   }
 
+  /**
+   * renderGrid displays cards that match the current search and tag filters.
+   * @returns {void}
+   */
   function renderGrid() {
     const gridElement = selectOne("#grid");
     const query = state.search.trim().toLowerCase();
-    const items = PROMPTS.filter(p => matches(p, query, state.tag));
+    const matchingPrompts = PROMPTS.filter(promptItem => matches(promptItem, query, state.tag));
     gridElement.innerHTML = "";
-    items.forEach(item => gridElement.appendChild(createCard(item)));
-    if (items.length === 0) {
-      const paragraph = document.createElement("p");
-      paragraph.style.color = "var(--text-1)";
-      paragraph.style.gridColumn = "1/-1";
-      paragraph.textContent = "No prompts match your search/filter.";
-      gridElement.appendChild(paragraph);
+    matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
+    if (matchingPrompts.length === 0) {
+      const messageParagraphElement = document.createElement("p");
+      messageParagraphElement.style.color = "var(--text-1)";
+      messageParagraphElement.style.gridColumn = "1/-1";
+      messageParagraphElement.textContent = NO_MATCH_MESSAGE;
+      gridElement.appendChild(messageParagraphElement);
     }
   }
 
@@ -565,12 +601,18 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       return cardElement;
     }
 
-  function copyPrompt(item, card) {
-    const content = `${item.text}`.trim();
+  /**
+   * copyPrompt writes a prompt's text to the clipboard and shows a toast message.
+   * @param {Object} promptItem prompt data to copy.
+   * @param {HTMLElement} cardElement associated card element.
+   * @returns {void}
+   */
+  function copyPrompt(promptItem, cardElement) {
+    const content = `${promptItem.text}`.trim();
     navigator.clipboard.writeText(sanitize(content)).then(() => {
-      const toastElement = selectOne(`.${CLASS_COPIED}`, card);
-      toastElement.setAttribute("data-show", "true");
-      setTimeout(() => toastElement.setAttribute("data-show", "false"), 1200);
+      const toastElement = selectOne(`.${CLASS_COPIED}`, cardElement);
+      toastElement.setAttribute(DATA_SHOW_ATTRIBUTE, "true");
+      setTimeout(() => toastElement.setAttribute(DATA_SHOW_ATTRIBUTE, "false"), 1200);
     }).catch(() => {
       const textareaElement = document.createElement("textarea");
       textareaElement.value = content;
@@ -582,6 +624,10 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       textareaElement.remove();
     });
   }
+  /**
+   * copyIcon generates SVG markup for the copy button.
+   * @returns {string} SVG markup string.
+   */
   function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
   const HTML_ESCAPE_PATTERN = /[&<>"']/g;
   const HTML_ESCAPE_REPLACEMENTS = {
@@ -594,7 +640,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   /** escapeHTML converts reserved HTML characters to escape sequences. */
   function escapeHTML(rawText){ return rawText.replace(HTML_ESCAPE_PATTERN, character => HTML_ESCAPE_REPLACEMENTS[character]); }
 
-  const onSearch = debounce(value => { state.search = value; persistState(); renderGrid(); }, 80);
+  /**
+   * onSearch updates the search text and re-renders the prompt grid.
+   * @param {string} searchValue value from the search input field.
+   * @returns {void}
+   */
+  const onSearch = debounce(searchValue => { state.search = searchValue; persistState(); renderGrid(); }, 80);
   /**
    * persistState saves the current search and tag state in localStorage.
    */
