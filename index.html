@@ -22,12 +22,14 @@
 </head>
 <body class="light">
   <header class="top appbar">
-    <div class="field prefix suffix round">
-      <span class="material-symbols-outlined" aria-hidden="true">search</span>
-      <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-      <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
-    </div>
-    <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+    <nav class="row middle">
+      <div class="field prefix suffix round grow">
+        <span id="searchIcon" class="material-symbols-outlined icon prefix" aria-hidden="true">search</span>
+        <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
+        <button class="icon suffix" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+    </nav>
   </header>
 <main class="responsive padding">
   <header>
@@ -581,7 +583,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     PROMPTS.forEach(promptItem => promptItem.tags.forEach(tagName => tagSet.add(tagName)));
     return [TAG_ALL, ...Array.from(tagSet).sort((tagA, tagB) => tagA.localeCompare(tagB))];
   }
-  /** renderChips populates the tag filter bar with chip buttons. */
+  /** renderChips populates the tag filter bar with chip buttons and reapplies Beer.css styling. */
   function renderChips() {
     const chipBarElement = selectOne("#chipBar");
     chipBarElement.innerHTML = "";
@@ -597,6 +599,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       chipContainerElement.appendChild(chipButtonElement);
     });
     chipBarElement.appendChild(chipContainerElement);
+    ui();
   }
   /**
    * highlightActiveChip updates the visual state of the selected tag chip.
@@ -609,7 +612,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   }
 
   /**
-   * renderGrid displays cards that match the current search and tag filters.
+   * renderGrid displays cards that match the current search and tag filters and reapplies Beer.css styling.
    * @returns {void}
    */
   function renderGrid() {
@@ -629,6 +632,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       messageParagraphElement.textContent = NO_MATCH_MESSAGE;
       gridElement.appendChild(messageParagraphElement);
     }
+    ui();
   }
 
     /** createCard builds a card element for a prompt. */
