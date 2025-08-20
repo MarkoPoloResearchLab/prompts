@@ -1,6 +1,10 @@
 const THEME_STORAGE_KEY = "preferred-theme";
 const LIGHT_THEME = "light";
 const DARK_THEME = "dark";
+const THEME_BUTTON_ID = "themeButton";
+const THEME_ICON_ID = "themeIcon";
+const JUMP_ANIMATION_CLASS = "jump";
+const JUMP_ANIMATION_DURATION_MS = 300;
 const PROMPTS_JSON_PATH = "prompts.json";
 
 function initializeTheme() {
@@ -229,17 +233,29 @@ function restoreState() {
 
 // ---------- Theme toggle ----------
 function setThemeControls(theme) {
-    const isDark = theme === DARK_THEME;
-    selectOne("#themeSwitch").checked = isDark;
-    selectOne("#themeIcon").textContent = isDark ? LIGHT_MODE_ICON : DARK_MODE_ICON;
+    const isDarkTheme = theme === DARK_THEME;
+    selectOne(`#${THEME_ICON_ID}`).textContent = isDarkTheme ? LIGHT_MODE_ICON : DARK_MODE_ICON;
 }
 
-function toggleThemeViaSwitch() {
-    const next = document.body.classList.contains(DARK_THEME) ? LIGHT_THEME : DARK_THEME;
+/**
+ * animateThemeIcon briefly moves the theme icon upward.
+ */
+function animateThemeIcon() {
+    const iconElement = selectOne(`#${THEME_ICON_ID}`);
+    iconElement.classList.add(JUMP_ANIMATION_CLASS);
+    setTimeout(() => iconElement.classList.remove(JUMP_ANIMATION_CLASS), JUMP_ANIMATION_DURATION_MS);
+}
+
+/**
+ * toggleTheme switches the document theme and animates the icon.
+ */
+function toggleTheme() {
+    const nextTheme = document.body.classList.contains(DARK_THEME) ? LIGHT_THEME : DARK_THEME;
     document.body.classList.remove(LIGHT_THEME, DARK_THEME);
-    document.body.classList.add(next);
-    localStorage.setItem(THEME_STORAGE_KEY, next);
-    setThemeControls(next);
+    document.body.classList.add(nextTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    setThemeControls(nextTheme);
+    animateThemeIcon();
 }
 
 /**
@@ -257,7 +273,7 @@ async function initializeApplication() {
     const searchInput = selectOne("#searchInput");
     searchInput.value = state.search;
     searchInput.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
-    selectOne("#themeSwitch").addEventListener(EVENT_CLICK, toggleThemeViaSwitch);
+    selectOne(`#${THEME_BUTTON_ID}`).addEventListener(EVENT_CLICK, toggleTheme);
 
     window.addEventListener(EVENT_KEYDOWN, event => {
         if (event.key === KEY_SLASH && document.activeElement !== searchInput) {

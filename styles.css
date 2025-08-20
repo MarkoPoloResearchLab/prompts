@@ -11,3 +11,19 @@ article.card > nav.actions {
     margin-top: auto;
     justify-content: flex-end;
 }
+
+#themeIcon.jump {
+    animation: theme-jump 0.3s ease;
+}
+
+@keyframes theme-jump {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-0.3rem);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
