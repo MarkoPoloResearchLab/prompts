@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Prompt Bubbles — Curated ChatGPT Prompts</title>
   <meta name="color-scheme" content="dark light" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beercss.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
   <script>
     const THEME_STORAGE_KEY = "preferred-theme";
     const LIGHT_THEME = "light";
@@ -19,21 +19,23 @@
       document.body.classList.add(selectedTheme);
     }
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beercss.min.js"></script>
 </head>
 <body class="light">
   <header class="top appbar">
     <div class="field prefix suffix round">
       <span class="material-symbols-outlined">search</span>
+      <span class="material-symbols-outlined" aria-hidden="true">search</span>
       <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
       <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
     </div>
     <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
   </header>
 <main class="responsive padding">
+    <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme" data-ui="dark icon"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
+  </nav>
   <header>
     <div id="headerContainer" aria-label="Site header">
-      <i id="headerIcon" aria-hidden="true"></i>
+      <span id="headerIcon" class="material-symbols-outlined" aria-hidden="true">bubble_chart</span>
       <h1 id="headerTitle">Prompt Bubbles</h1>
     </div>
     <p id="headerSubtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
@@ -59,6 +61,9 @@
   const HEADLINE_CLASS = "headline";
   const SUBTITLE_CLASS = "subtitle";
   const CENTER_CLASS = "center";
+  const TEXT_CLASS = "text";
+  const SECONDARY_CLASS = "secondary";
+  const SPAN_ALL_COLUMNS_CLASS = "s12";
 
   const ICON_NAME = "bubble_chart";
   const FOOTER_MESSAGE = "Tip: Press / to jump to search • Press Enter on a focused card to copy";
@@ -603,8 +608,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
     if (matchingPrompts.length === 0) {
       const messageParagraphElement = document.createElement("p");
-      messageParagraphElement.style.color = "var(--text-1)";
-      messageParagraphElement.style.gridColumn = "1/-1";
+      messageParagraphElement.classList.add(
+        TEXT_CLASS,
+        SECONDARY_CLASS,
+        CENTER_CLASS,
+        SPAN_ALL_COLUMNS_CLASS
+      );
       messageParagraphElement.textContent = NO_MATCH_MESSAGE;
       gridElement.appendChild(messageParagraphElement);
     }
