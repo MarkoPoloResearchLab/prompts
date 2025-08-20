@@ -467,6 +467,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLASS_CHIPS = "chips";
   const CLASS_CHIP = "chip";
   const CLASS_COPIED = "copied";
+  /** CLASS_TAG_DOT is the CSS class for the tag indicator. */
+  const CLASS_TAG_DOT = "tag-dot";
   const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
   const COPY_BUTTON_LABEL = "Copy";
   const COPIED_TOAST_MESSAGE = "Copied \u2713";
@@ -583,9 +585,15 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       const cardElement=document.createElement("article"); cardElement.className=CLASS_CARD; cardElement.setAttribute("role","listitem"); cardElement.tabIndex=0;
 
       const contentElement=document.createElement("div"); contentElement.className=CLASS_CONTENT;
-      const titleContainer=document.createElement("div");
-      titleContainer.innerHTML=`<span class="tag-dot" aria-hidden="true"></span><h3>${escapeHTML(item.title)}</h3>`;
-      contentElement.appendChild(titleContainer);
+      const titleContainerElement=document.createElement("div");
+      const tagDotElement=document.createElement("span");
+      tagDotElement.className=CLASS_TAG_DOT;
+      tagDotElement.setAttribute("aria-hidden","true");
+      const titleHeadingElement=document.createElement("h3");
+      titleHeadingElement.innerHTML=escapeHTML(item.title);
+      titleContainerElement.appendChild(tagDotElement);
+      titleContainerElement.appendChild(titleHeadingElement);
+      contentElement.appendChild(titleContainerElement);
 
       const tagContainerElement=document.createElement("div"); tagContainerElement.className=CLASS_CHIPS;
       item.tags.forEach(tagName=>{ const tagChipElement=document.createElement("div"); tagChipElement.className=CLASS_CHIP; tagChipElement.textContent=tagName; tagContainerElement.appendChild(tagChipElement); });
