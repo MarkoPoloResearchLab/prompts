@@ -568,6 +568,10 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   // ====== STATE ======
   const state = { search:"", tag:"all" };
 
+  const CLICK_EVENT = "click";
+  const TAG_CLASS = "tag";
+  const SPAN_ELEMENT = "span";
+
   // ====== HELPERS ======
   const $ = (s, r=document)=>r.querySelector(s);
   const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
@@ -585,17 +589,26 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     const t=new Set(); PROMPTS.forEach(p=>p.tags.forEach(tag=>t.add(tag)));
     return ["all",...Array.from(t).sort((a,b)=>a.localeCompare(b))];
   }
+  // renderChips shows filter chips for all unique tags.
   function renderChips(){
     const bar=$("#chipBar"); bar.innerHTML="";
-    uniqueTags().forEach(tag=>{
+    uniqueTags().forEach(tagName=>{
       const chip=document.createElement("button");
-      chip.className="chip"; chip.type="button"; chip.textContent=tag;
-      chip.setAttribute("data-active", tag===state.tag ? "true":"false");
-      chip.onclick=()=>{ state.tag=tag; persist(); renderGrid(); highlightActiveChip(); };
+      chip.className="chip"; chip.type="button"; chip.textContent=tagName;
+      chip.setAttribute("data-active", tagName===state.tag ? "true":"false");
+      chip.onclick=()=>selectTag(tagName);
       bar.appendChild(chip);
     });
   }
   function highlightActiveChip(){ $$("#chipBar .chip").forEach(c=>c.setAttribute("data-active", String(c.textContent===state.tag))); }
+
+  // selectTag updates the selected tag and refreshes the grid and chip states.
+  function selectTag(tagName){
+    state.tag=tagName;
+    persist();
+    renderGrid();
+    highlightActiveChip();
+  }
 
   function renderGrid(){
     const grid=$("#grid"); const q=state.search.trim().toLowerCase();
@@ -605,6 +618,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     if(items.length===0){ const p=document.createElement("p"); p.style.color="var(--text-1)"; p.style.gridColumn="1/-1"; p.textContent="No prompts match your search/filter."; grid.appendChild(p); }
   }
 
+  // createCard builds a card for a prompt, wiring tag selection.
   function createCard(item){
     const card=document.createElement("article"); card.className="card"; card.setAttribute("role","listitem"); card.tabIndex=0;
 
@@ -613,7 +627,13 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     card.appendChild(header);
 
     const tags=document.createElement("div"); tags.className="card-tags";
-    item.tags.forEach(t=>{ const el=document.createElement("span"); el.className="tag"; el.textContent=t; tags.appendChild(el); });
+    item.tags.forEach(tagName=>{
+      const tagElement=document.createElement(SPAN_ELEMENT);
+      tagElement.className=TAG_CLASS;
+      tagElement.textContent=tagName;
+      tagElement.addEventListener(CLICK_EVENT,()=>selectTag(tagName));
+      tags.appendChild(tagElement);
+    });
     card.appendChild(tags);
 
     const text=document.createElement("pre"); text.className="card-text"; text.textContent=item.text; card.appendChild(text);
