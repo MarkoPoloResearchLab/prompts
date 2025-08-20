@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
   <style>
     .card-header { min-height: 7rem; }
+    #searchRow { margin-top: 1rem; }
+    #searchContainer { width: 100%; }
   </style>
   <script>
     const THEME_STORAGE_KEY = "preferred-theme";
@@ -24,21 +26,19 @@
   </script>
 </head>
 <body class="light">
-  <header class="top appbar">
-    <nav>
-      <div class="field prefix suffix round grow">
+<main class="responsive padding">
+  <header class="center">
+    <div id="headerContainer" aria-label="Site header">
+      <span id="headerIcon" class="material-symbols-outlined" aria-hidden="true">bubble_chart</span>
+      <h1 id="headerTitle">Prompt Bubbles</h1>
+    </div>
+    <div class="row center middle" id="searchRow">
+      <div class="field prefix suffix round grow" id="searchContainer">
         <span class="material-symbols-outlined icon prefix" aria-hidden="true">search</span>
         <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
         <button class="icon suffix" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
       </div>
       <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
-    </nav>
-  </header>
-<main class="responsive padding">
-  <header>
-    <div id="headerContainer" aria-label="Site header">
-      <span id="headerIcon" class="material-symbols-outlined" aria-hidden="true">bubble_chart</span>
-      <h1 id="headerTitle">Prompt Bubbles</h1>
     </div>
     <p id="headerSubtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
     <div id="chipBar" aria-label="Tag filters"></div>
