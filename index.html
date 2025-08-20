@@ -501,6 +501,10 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLASS_BUTTON = "button";
   const CLASS_CHIPS = "chips";
   const CLASS_CHIP = "chip";
+  /** GROW_CLASS expands a flex child to fill available vertical space. */
+  const GROW_CLASS = "grow";
+  /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
+  const COLUMN_STRETCH_CLASS = "column stretch";
   /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
   const SNACKBAR_CLASS_NAME = "snackbar";
   const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
@@ -634,12 +638,13 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     /** createCard builds a card element for a prompt. */
     function createCard(promptItem) {
       const cardElement = document.createElement(TAG_ARTICLE);
-      cardElement.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES}`;
+      cardElement.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES} ${COLUMN_STRETCH_CLASS}`;
       cardElement.setAttribute(ATTRIBUTE_ROLE, ROLE_LIST_ITEM);
       cardElement.tabIndex = 0;
 
       const contentElement = document.createElement(TAG_DIV);
       contentElement.className = CLASS_CONTENT;
+      contentElement.classList.add(GROW_CLASS);
 
       const titleHeadingElement = document.createElement(TAG_H3);
       titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
@@ -655,9 +660,13 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       });
       contentElement.appendChild(chipContainerElement);
 
+      const textWrapperElement = document.createElement(TAG_DIV);
+      textWrapperElement.className = GROW_CLASS;
       const textElement = document.createElement(TAG_PRE);
+      textElement.className = TEXT_CLASS;
       textElement.textContent = promptItem.text;
-      contentElement.appendChild(textElement);
+      textWrapperElement.appendChild(textElement);
+      contentElement.appendChild(textWrapperElement);
 
       cardElement.appendChild(contentElement);
 
