@@ -603,7 +603,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       chipContainerElement.appendChild(chipButtonElement);
     });
     chipBarElement.appendChild(chipContainerElement);
-    ui();
+    ui(CLASS_CHIPS, chipContainerElement);
   }
   /**
    * highlightActiveChip updates the visual state of the selected tag chip.
@@ -625,6 +625,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     const matchingPrompts = PROMPTS.filter(promptItem => matches(promptItem, query, state.tag));
     gridElement.innerHTML = "";
     matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
+    ui(CLASS_CARD, gridElement);
     if (matchingPrompts.length === 0) {
       const messageParagraphElement = document.createElement("p");
       messageParagraphElement.classList.add(
@@ -636,7 +637,6 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       messageParagraphElement.textContent = NO_MATCH_MESSAGE;
       gridElement.appendChild(messageParagraphElement);
     }
-    ui();
   }
 
     /** createCard builds a card element for a prompt. */
