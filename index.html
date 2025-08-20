@@ -508,6 +508,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLASS_BUTTON = "button";
   const CLASS_CHIPS = "chips";
   const CLASS_CHIP = "chip";
+  /** END_ALIGNMENT_CLASS aligns elements to the end of a flex container. */
+  const END_ALIGNMENT_CLASS = "end";
   /** GROW_CLASS expands a flex child to fill available vertical space. */
   const GROW_CLASS = "grow";
   /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
@@ -682,7 +684,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       cardElement.appendChild(contentElement);
 
       const actionsElement = document.createElement(TAG_NAV);
-      actionsElement.className = CLASS_ACTIONS;
+      actionsElement.className = `${CLASS_ACTIONS} ${END_ALIGNMENT_CLASS}`;
 
       const copyButtonElement = document.createElement(TAG_BUTTON);
       copyButtonElement.className = CLASS_BUTTON;
