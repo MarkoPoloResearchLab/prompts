@@ -14,30 +14,23 @@
 <body class="light">
 <main class="responsive padding">
 
-    <!-- 1) Icon + title on one line (row + nowrap) -->
     <header>
-        <div class="row middle nowrap">
+        <div class="row middle nowrap" style="gap:1rem;">
             <h1 class="headline row middle nowrap" style="gap:.5rem">
                 <span aria-hidden="true" class="material-symbols-outlined icon">bubble_chart</span>
                 <span>Prompt Bubbles</span>
             </h1>
 
-            <div class="row middle end grow"></div>
+            <div class="field prefix suffix round fill grow" id="searchContainer" style="width:100%">
+                <i aria-hidden="true" class="material-symbols-outlined icon prefix">search</i>
+                <input aria-label="Search prompts" autocomplete="off" id="searchInput"
+                       placeholder="Search prompts (title, text, tags)..." type="search"/>
+            </div>
+
             <div aria-label="Theme toggle" class="row middle">
                 <button id="themeButton" class="transparent" title="Toggle light or dark theme" aria-label="Toggle theme" type="button">
                     <i aria-hidden="true" class="material-symbols-outlined icon" id="themeIcon">dark_mode</i>
                 </button>
-            </div>
-        </div>
-
-        <!-- 2) Search field spans the container width -->
-        <div class="row">
-            <div class="s12">
-                <div class="field prefix suffix round fill" id="searchContainer" style="width:100%">
-                    <i aria-hidden="true" class="material-symbols-outlined icon prefix">search</i>
-                    <input aria-label="Search prompts" autocomplete="off" id="searchInput"
-                           placeholder="Search prompts (title, text, tags)..." type="search"/>
-                </div>
             </div>
         </div>
 
