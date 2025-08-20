@@ -506,6 +506,19 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const COPY_BUTTON_LABEL = "Copy";
   /** COPY_SNACKBAR_MESSAGE is the text shown after a prompt is copied. */
   const COPY_SNACKBAR_MESSAGE = "Copied \u2713";
+  /** HTML tag names used to construct prompt cards. */
+  const TAG_ARTICLE = "article";
+  const TAG_DIV = "div";
+  const TAG_H3 = "h3";
+  const TAG_PRE = "pre";
+  const TAG_NAV = "nav";
+  const TAG_BUTTON = "button";
+  /** Attribute names and values for prompt card elements. */
+  const ATTRIBUTE_ROLE = "role";
+  const ROLE_LIST_ITEM = "listitem";
+  const ATTRIBUTE_ARIA_LABEL = "aria-label";
+  const ATTRIBUTE_TYPE = "type";
+  const BUTTON_TYPE_BUTTON = "button";
   const DATA_ACTIVE_ATTRIBUTE = "data-active";
   const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
   const EVENT_INPUT = "input";
@@ -618,32 +631,59 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   }
 
     /** createCard builds a card element for a prompt. */
-    function createCard(promptItem){
-      const cardElement=document.createElement("article"); cardElement.className=CLASS_CARD; cardElement.setAttribute("role","listitem"); cardElement.tabIndex=0;
+    function createCard(promptItem) {
+      const cardElement = document.createElement(TAG_ARTICLE);
+      cardElement.className = CLASS_CARD;
+      cardElement.setAttribute(ATTRIBUTE_ROLE, ROLE_LIST_ITEM);
+      cardElement.tabIndex = 0;
 
-      const contentElement=document.createElement("div"); contentElement.className=CLASS_CONTENT;
-      const titleContainerElement=document.createElement("div");
-      const titleHeadingElement=document.createElement("h3");
-      titleHeadingElement.innerHTML=escapeHTML(promptItem.title);
-      titleContainerElement.appendChild(titleHeadingElement);
-      contentElement.appendChild(titleContainerElement);
+      const contentElement = document.createElement(TAG_DIV);
+      contentElement.className = CLASS_CONTENT;
 
-      const chipContainerElement=document.createElement("div"); chipContainerElement.className=CLASS_CHIPS;
-      promptItem.tags.forEach(tagName=>{ const chipElement=document.createElement("div"); chipElement.className=CLASS_CHIP; chipElement.textContent=tagName; chipContainerElement.appendChild(chipElement); });
+      const titleHeadingElement = document.createElement(TAG_H3);
+      titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
+      contentElement.appendChild(titleHeadingElement);
+
+      const chipContainerElement = document.createElement(TAG_DIV);
+      chipContainerElement.className = CLASS_CHIPS;
+      promptItem.tags.forEach(tagName => {
+        const chipElement = document.createElement(TAG_DIV);
+        chipElement.className = CLASS_CHIP;
+        chipElement.textContent = tagName;
+        chipContainerElement.appendChild(chipElement);
+      });
       contentElement.appendChild(chipContainerElement);
 
-      const textElement=document.createElement("pre"); textElement.textContent=promptItem.text; contentElement.appendChild(textElement);
+      const textElement = document.createElement(TAG_PRE);
+      textElement.textContent = promptItem.text;
+      contentElement.appendChild(textElement);
+
       cardElement.appendChild(contentElement);
 
-      const actionsElement=document.createElement("nav"); actionsElement.className=CLASS_ACTIONS;
-      const copyButtonElement=document.createElement("button"); copyButtonElement.className=CLASS_BUTTON; copyButtonElement.type="button"; copyButtonElement.setAttribute("aria-label",`${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`);
-      copyButtonElement.innerHTML=copyIcon()+`<span>${COPY_BUTTON_LABEL}</span>`; copyButtonElement.onclick=()=>copyPrompt(promptItem,cardElement);
-      actionsElement.appendChild(copyButtonElement); cardElement.appendChild(actionsElement);
+      const actionsElement = document.createElement(TAG_NAV);
+      actionsElement.className = CLASS_ACTIONS;
 
-      const snackbarElement=document.createElement("div"); snackbarElement.className=SNACKBAR_CLASS_NAME; snackbarElement.textContent=COPY_SNACKBAR_MESSAGE; cardElement.appendChild(snackbarElement);
+      const copyButtonElement = document.createElement(TAG_BUTTON);
+      copyButtonElement.className = CLASS_BUTTON;
+      copyButtonElement.type = BUTTON_TYPE_BUTTON;
+      const copyLabel = `${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`;
+      copyButtonElement.setAttribute(ATTRIBUTE_ARIA_LABEL, copyLabel);
+      copyButtonElement.innerHTML = copyIcon() + `<span>${COPY_BUTTON_LABEL}</span>`;
+      copyButtonElement.onclick = () => copyPrompt(promptItem, cardElement);
+      actionsElement.appendChild(copyButtonElement);
+
+      cardElement.appendChild(actionsElement);
+
+      const snackbarElement = document.createElement(TAG_DIV);
+      snackbarElement.className = SNACKBAR_CLASS_NAME;
+      snackbarElement.textContent = COPY_SNACKBAR_MESSAGE;
+      cardElement.appendChild(snackbarElement);
 
       cardElement.addEventListener(EVENT_KEYDOWN, event => {
-        if (event.key === KEY_ENTER) { event.preventDefault(); copyPrompt(promptItem, cardElement); }
+        if (event.key === KEY_ENTER) {
+          event.preventDefault();
+          copyPrompt(promptItem, cardElement);
+        }
       });
       return cardElement;
     }
