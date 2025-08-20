@@ -1,828 +1,344 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Prompt Bubbles — Curated ChatGPT Prompts</title>
-  <meta name="color-scheme" content="dark light" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
-  <style>
-    .uniform-card { height: 360px; display: flex; flex-direction: column; }
-  </style>
-  <script>
-    const THEME_STORAGE_KEY = "preferred-theme";
-    const LIGHT_THEME = "light";
-    const DARK_THEME = "dark";
-    /** initializeTheme applies a persisted theme preference. */
-    function initializeTheme() {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-      const selectedTheme = savedTheme === DARK_THEME ? DARK_THEME : LIGHT_THEME;
-      document.body.classList.remove(LIGHT_THEME, DARK_THEME);
-      document.body.classList.add(selectedTheme);
-    }
-  </script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Prompt Bubbles — Curated ChatGPT Prompts</title>
+    <meta content="dark light" name="color-scheme"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" rel="stylesheet"/>
+
+    <!-- Minimal, last-resort CSS: only to pin actions to the card bottom-right -->
+    <style>
+        article.card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        article.card > .content {
+            flex: 1 1 auto;
+        }
+
+        article.card > nav.actions {
+            margin-top: auto;
+            justify-content: flex-end;
+        }
+    </style>
+
+    <script>
+        const THEME_STORAGE_KEY = "preferred-theme";
+        const LIGHT_THEME = "light";
+        const DARK_THEME = "dark";
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            const selectedTheme = savedTheme === DARK_THEME ? DARK_THEME : LIGHT_THEME;
+            document.body.classList.remove(LIGHT_THEME, DARK_THEME);
+            document.body.classList.add(selectedTheme);
+            return selectedTheme;
+        }
+    </script>
 </head>
 <body class="light">
 <main class="responsive padding">
-  <header class="center">
-    <div id="headerContainer" aria-label="Site header">
-      <span id="headerIcon" class="material-symbols-outlined" aria-hidden="true">bubble_chart</span>
-      <h1 id="headerTitle">Prompt Bubbles</h1>
-    </div>
-    <div class="row middle" id="searchRow">
-      <div class="field prefix suffix round grow" id="searchContainer" style="width:100%">
-        <i class="material-symbols-outlined icon prefix" aria-hidden="true">search</i>
-        <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-      </div>
-      <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
-    </div>
-    <p id="headerSubtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
-    <div id="chipBar" aria-label="Tag filters"></div>
-  </header>
 
-  <section class="grid large" id="grid" role="list" aria-label="Prompt cards"></section>
-  <footer class="center" id="footerContainer"></footer>
+    <!-- 1) Icon + title on one line (row + nowrap) -->
+    <header>
+        <div class="row middle nowrap">
+            <h1 class="headline row middle nowrap" style="gap:.5rem">
+                <span aria-hidden="true" class="material-symbols-outlined icon">bubble_chart</span>
+                <span>Prompt Bubbles</span>
+            </h1>
+
+            <!-- 4) Real toggle switch with an icon -->
+            <div class="row middle end grow"></div>
+            <div aria-label="Theme toggle" class="row middle">
+                <i aria-hidden="true" class="material-symbols-outlined icon" id="themeIcon">dark_mode</i>
+                <label class="switch" title="Toggle light/dark theme">
+                    <input aria-label="Toggle theme" id="themeSwitch" type="checkbox">
+                    <span></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 2) Search field spans the container width -->
+        <div class="row">
+            <div class="s12">
+                <div class="field prefix suffix round fill" id="searchContainer" style="width:100%">
+                    <i aria-hidden="true" class="material-symbols-outlined icon prefix">search</i>
+                    <input aria-label="Search prompts" autocomplete="off" id="searchInput"
+                           placeholder="Search prompts (title, text, tags)..." type="search"/>
+                </div>
+            </div>
+        </div>
+
+        <p class="subtitle" id="headerSubtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
+        <div aria-label="Tag filters" id="chipBar"></div>
+    </header>
+
+    <section aria-label="Prompt cards" class="grid large" id="grid" role="list"></section>
+
+    <footer class="center" id="footerContainer">Tip: Press / to jump to search • Press Enter on a focused card to copy
+    </footer>
 </main>
 
-<div id="copySnackbar" class="snackbar"></div>
+<div class="snackbar" id="copySnackbar"></div>
 
-<script type="module" src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@latest/dist/cdn/material-dynamic-colors.min.js"></script>
-<script>
-  const THEME_TOGGLE_BUTTON_ID = "themeToggle";
-  const DARK_MODE_ICON = "dark_mode";
-  const LIGHT_MODE_ICON = "light_mode";
-  const HEADER_CONTAINER_ID = "headerContainer";
-  const HEADER_ICON_ID = "headerIcon";
-  const HEADER_TITLE_ID = "headerTitle";
-  const HEADER_SUBTITLE_ID = "headerSubtitle";
-  const FOOTER_CONTAINER_ID = "footerContainer";
+<script src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@latest/dist/cdn/material-dynamic-colors.min.js"
+        type="module"></script>
 
-  const ROW_CLASS = "row";
-  const MIDDLE_CLASS = "middle";
-  const ICON_CLASS = "icon";
-  const HEADLINE_CLASS = "headline";
-  const SUBTITLE_CLASS = "subtitle";
-  const CENTER_CLASS = "center";
-  const TEXT_CLASS = "text";
-  const SECONDARY_CLASS = "secondary";
-  const SPAN_ALL_COLUMNS_CLASS = "s12";
+<script type="module">
+    import { PROMPTS as PROMPTS_DATA } from './prompts.js';
+    // ---------- Constants ----------
+    const DARK_MODE_ICON = "dark_mode";
+    const LIGHT_MODE_ICON = "light_mode";
 
-  const ICON_NAME = "bubble_chart";
-  const FOOTER_MESSAGE = "Tip: Press / to jump to search • Press Enter on a focused card to copy";
+    const CLASS_CARD = "card";
+    const CLASS_CONTENT = "content";
+    const CLASS_ACTIONS = "actions";
+    const CLASS_BUTTON = "button";
+    const CLASS_CHIPS = "chips";
+    const CLASS_CHIP = "chip";
+    const GRID_ITEM_CLASSES = "s12 m6 l4";
+    const TEXT_CLASS = "text";
 
-  /** initializeLayout applies standard Beer.css classes and text content. */
-  function initializeLayout() {
-    const headerContainer = document.getElementById(HEADER_CONTAINER_ID);
-    headerContainer.classList.add(ROW_CLASS, MIDDLE_CLASS, CENTER_CLASS);
+    const SNACKBAR_CLASS_NAME = "snackbar";
+    const COPY_SNACKBAR_ID = "copySnackbar";
+    const COPY_BUTTON_LABEL = "Copy";
 
-    const headerIcon = document.getElementById(HEADER_ICON_ID);
-    headerIcon.classList.add(ICON_CLASS);
-    headerIcon.textContent = ICON_NAME;
+    const TAG_ALL = "all";
+    const state = {search: "", tag: TAG_ALL};
+    const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
 
-    document.getElementById(HEADER_TITLE_ID).classList.add(HEADLINE_CLASS);
-    document.getElementById(HEADER_SUBTITLE_ID).classList.add(SUBTITLE_CLASS);
+    const EVENT_INPUT = "input";
+    const EVENT_CLICK = "click";
+    const EVENT_KEYDOWN = "keydown";
+    const EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded";
+    const KEY_ENTER = "Enter";
+    const KEY_SLASH = "/";
 
-    const footerContainer = document.getElementById(FOOTER_CONTAINER_ID);
-    footerContainer.classList.add(CENTER_CLASS);
-    footerContainer.textContent = FOOTER_MESSAGE;
-  }
-
-  const PROMPTS = [
-    { id: "p01", title: "Ultra‑tight Bug Report Summarizer", text: `You are a senior SRE. Summarize the following bug/incident:
-- Extract root cause in one sentence.
-- List 3–5 high‑impact user symptoms.
-- Give a one‑paragraph timeline with precise timestamps.
-- Output a final, single remediation checklist with owners.`, tags: ["engineering", "writing"] },
-    { id: "p02", title: "Product Requirements Refiner", text: `Rewrite this PRD as a crisp, testable spec:
-- Replace vague language with measurable acceptance criteria.
-- Add explicit non‑goals.
-- Propose at most 2 KPIs and define success thresholds.`, tags: ["business", "writing"] },
-    { id: "p03", title: "Creative Writing: Character Engine", text: `Generate a character sheet:
-- Archetype + twist
-- 3 contradictions
-- Voice tics and taboo topics
-- A 2‑sentence backstory that implies a secret.`, tags: ["creative", "writing"] },
-    { id: "p04", title: "SQL Reviewer", text: `Given a SQL query:
-1) Explain what it does in plain English.
-2) Identify logical errors or edge cases.
-3) Suggest an optimized rewrite with indexes.`, tags: ["data"] },
-    { id: "p05", title: "Image Prompt Polisher", text: `Transform this messy image prompt into a camera‑ready version:
-- Unambiguous subject, composition, lens, time of day
-- 3 stylistic constraints
-- 1 negative list of banned elements`, tags: ["images", "creative"] },
-    { id: "p06", title: "Interview: STAR Compressor", text: `Convert this experience into STAR format (Situation, Task, Action, Result) with quantifiable outcomes and a 2‑line takeaway.`, tags: ["career", "writing"] },
-    { id: "p07", title: "Docs to Cheat‑Sheet", text: `Reduce this long document into: 10 bullet cheat‑sheet, 5 pitfalls, 3 commands/snippets worth memorizing.`, tags: ["writing"] },
-    { id: "p08", title: "UX Copy (Microcopy)", text: `Write concise microcopy for this UI:
-- Primary button (max 2 words)
-- Empty‑state line (max 9 words)
-- Tooltip (max 14 words), with verb first.`, tags: ["business", "writing"] },
-    { id: "p09", title: "Teacher Mode", text: `Teach this concept to a curious 12‑year‑old:
-- Hook in 2 sentences
-- Analogy
-- One worked example
-- A 3‑question quiz with answers.`, tags: ["education"] },
-    { id: "p10", title: "Meeting → Decision Log", text: `Turn these notes into a decision log:
-- Final decision in one line
-- Options considered + why rejected
-- Owners and due dates`, tags: ["business", "writing"] },
-    { id: "p11", title: "Use What You Know: 90‑Day $400k Plan", text: `Using what you know about me, propose 3 product/business bets targeting ~$400k/yr income.
-For each:
-- Core user, painful job‑to‑be‑done, unfair advantage from my background
-- Simple validation plan (next 2 weeks), success metric to continue
-- 90‑day roadmap (milestones, risks, kill criteria)`, tags: ["personal", "business"] },
-    { id: "p12", title: "Personal Day Architect", text: `Using what you know about me, design a weekday schedule that maximizes morning output and preserves evenings for family.
-- 3‑hour deep‑work block with focus ritual
-- Two break routines that don't derail momentum
-- Family time plan + one micro‑win to close the day`, tags: ["personal"] },
-    { id: "p13", title: "Kind Roast → Action Plan", text: `Using what you know about me, write a 6‑line gentle roast highlighting my predictable pitfalls.
-Then convert it into a 5‑step action plan with measurable weekly targets.`, tags: ["personal", "fun"] },
-    { id: "p14", title: "Venture Skeptic Roleplay", text: `Roleplay as a brutally honest VC. Using what you know about me, interrogate one idea of mine:
-- 6 hard questions
-- 3 fatal risks and how to test cheaply
-- Funding memo (no fluff) with go/no‑go today`, tags: ["personal", "business"] },
-    { id: "p15", title: "Beatbox Anthem for GPT‑5", text: `Compose 16 bars of onomatopoeic beatbox + rap celebrating GPT‑5.
-Constraints:
-- Use lines with sounds like "tks tks pff k‑tch bmm"
-- Include a punchy chorus about reasoning
-- End with a one‑line dedication`, tags: ["creative", "fun"] },
-    { id: "p16", title: "Emoji‑First, Words‑Second", text: `Respond in emojis only for the first pass (max 10 emojis).
-Then provide a plain‑English translation and a 3‑bullet action list.`, tags: ["fun"] },
-    { id: "p17", title: "ASCII Loading Bar → Reveal", text: `Start with an ASCII progress bar that fills from 0%→100% in 5 steps.
-After it reaches 100%, reveal the full answer.
-Topic: {YOUR TOPIC}.`, tags: ["fun"] },
-    { id: "p18", title: "Haiku + SQL Mode", text: `Explain {DATA TASK} as:
-1) A haiku
-2) A minimal SQL example with indexes
-3) One pitfall and one test query`, tags: ["data", "fun"] },
-    { id: "p19", title: "Hex‑Speak Reply", text: `Answer in UTF‑8 hex bytes only for the first section (no spaces).
-Then decode it in a second section and continue normally.`, tags: ["fun"] },
-    { id: "p20", title: "Greek Chorus Counsel", text: `Respond as a Greek chorus (strophe, antistrophe, epode) giving strategic advice on {DECISION}.
-End with a concise, modern recommendation.`, tags: ["creative", "fun"] },
-    { id: "p21", title: "Two Truths and a Lie (Detection Game)", text: `Present two correct statements and one plausible lie about {TOPIC}.
-Ask me to identify the lie, then reveal and correct it with a brief explanation.`, tags: ["games", "fun"] },
-    { id: "p22", title: "Constraint Maze Answer", text: `Explain {TOPIC} where every sentence starts with the next letter of the alphabet from A→G.
-If a letter is hard, creatively bend the phrasing but keep meaning intact.`, tags: ["creative", "fun"] },
-    { id: "p23", title: "Self‑Check then Solve", text: `Give your best answer to {QUESTION}.
-Then list 5 ways you might be wrong or incomplete.
-Revise the answer once incorporating the top 2 fixes.`, tags: ["meta"] },
-    { id: "p24", title: "Personalized Recruiter Pitch", text: `Using what you know about me, craft a recruiter‑ready profile:
-- 4 bullet “spikes” with metrics
-- 2 crisp narratives (mission + craft)
-- One‑liner headline (max 12 words)`, tags: ["personal", "career", "writing"] },
-    { id: "p25", title: "Meta‑Prompt: “Use What You Know About Me”", text: `Using what you know about me, propose 3 prompt ideas I would actually enjoy this week.
-For each idea:
-- Title, why it fits me, one twist to make it playful
-- The exact prompt text ready to paste`, tags: ["personal", "meta", "fun"] },
-    { id: "p26", title: "Konami Bonus Tips (Easter Egg)", text: `Pretend I entered the Konami code. Reveal 5 “advanced” hidden tips for using you more effectively on {WORKFLOW}, each with a 1‑line example prompt.`, tags: ["meta", "fun"] },
-    { id: "p27", title: "Code Refactoring Assistant", text: `Given a code snippet:
-- Rewrite it to improve readability and efficiency.
-- Add comments explaining any complex logic.
-- Ensure the functionality remains the same.`, tags: ["engineering"] },
-    { id: "p28", title: "Code Reviewer", text: `Review the following code for quality:
-1) Summarize what the code is doing.
-2) Point out any potential bugs or edge cases.
-3) Suggest improvements or best practices (and explain why).`, tags: ["engineering", "writing"] },
-    { id: "p29", title: "System Design Coach", text: `You are a software architect. I need a system to do {X}:
-- Propose a high-level architecture with 3–5 key components.
-- Explain how data flows and why you chose each component.
-- List one potential bottleneck or risk and how to mitigate it.`, tags: ["engineering"] },
-    { id: "p30", title: "Rubber Duck Debugger", text: `I'm debugging an issue with my code. Help me by asking step-by-step questions:
-- Ask one question at a time about the code, inputs, or assumptions.
-- Use my answers to guide the next question.
-- Continue until we identify the likely bug or solution.`, tags: ["engineering", "education"] },
-    { id: "p31", title: "Data Insights Explorer", text: `I have some data about {TOPIC}. Analyze it and provide insights:
-- Mention 3 notable patterns, trends, or outliers.
-- Suggest one possible reason or hypothesis for each pattern.
-- Propose 2 follow-up questions or analyses to dig deeper.`, tags: ["data"] },
-    { id: "p32", title: "Excel Formula Helper", text: `I need a spreadsheet formula to accomplish this task: {DESCRIPTION}.
-- Provide the formula and specify if it's for Excel or Google Sheets.
-- Explain how it works step by step.
-- Mention any assumptions (like sheet names or data ranges).`, tags: ["data"] },
-    { id: "p33", title: "Database Designer", text: `Design a simple database schema for {SCENARIO}:
-- List 3–5 tables with their names and key columns.
-- Describe the relationships between tables (e.g., one-to-many).
-- Provide one example query that this schema would support.`, tags: ["data"] },
-    { id: "p34", title: "SWOT Analysis Guru", text: `Perform a SWOT analysis for {PROJECT/COMPANY} aiming to {GOAL}:
-- Strengths: 3 internal advantages.
-- Weaknesses: 3 internal limitations.
-- Opportunities: 3 external factors to leverage.
-- Threats: 3 external risks.
-Keep each point concise.`, tags: ["business"] },
-    { id: "p35", title: "Marketing Plan Brainstormer", text: `Outline a basic marketing plan for {PRODUCT} targeting {AUDIENCE}:
-1) State the core value proposition in one sentence.
-2) List 3 marketing channels with one strategy each.
-3) Suggest one metric to measure success for each channel.`, tags: ["business"] },
-    { id: "p36", title: "OKR Planner", text: `Draft quarterly OKRs for {TEAM/PROJECT}:
-- Propose 1–2 high-level Objectives.
-- Under each, list 2–3 Key Results (specific & measurable).
-- Ensure they align with {HIGHER GOAL} and are realistic for the quarter.`, tags: ["business"] },
-    { id: "p37", title: "Product Launch Planner", text: `Create a launch plan for a new {PRODUCT TYPE} in {MARKET}:
-- Identify 3 critical pre-launch steps (and why they're important).
-- Suggest 3 marketing activities for launch week (with target channels).
-- Propose one metric to gauge launch success.`, tags: ["business"] },
-    { id: "p38", title: "Email Tone Adjuster", text: `I have written an email about {SITUATION}. Rewrite it with a polite yet firm tone:
-- Preserve the key message and details.
-- Use professional language (no slang) and clear structure.
-- Make sure the request or point is stated courteously but assertively.`, tags: ["writing"] },
-    { id: "p39", title: "Grammar & Style Coach", text: `Analyze the following text for improvement:
-1. Correct any grammar and spelling mistakes.
-2. Suggest changes to improve clarity and tone.
-3. Provide a revised version of one tricky sentence as an example.`, tags: ["writing"] },
-    { id: "p40", title: "Jargon Simplifier", text: `Rewrite the following technical passage for a general audience:
-- Replace jargon or complex terms with simple words.
-- Use short, clear sentences.
-- Preserve the original meaning while making the explanation accessible to anyone.`, tags: ["writing"] },
-    { id: "p41", title: "Executive Summary Generator", text: `Summarize the following report for an executive audience:
-- Present 5 key findings or insights as bullet points.
-- Focus on high-level implications and numbers, not technical details.
-- Keep it concise and actionable.`, tags: ["writing"] },
-    { id: "p42", title: "Headline Variants Generator", text: `Given the article/content summary, propose 3 headline options:
-- One straightforward, SEO-friendly title.
-- One creative or humorous title to attract attention.
-- One ultra-concise title (max 5 words).
-Each should capture the main idea effectively.`, tags: ["writing", "creative"] },
-    { id: "p43", title: "Fairy Tale Remix", text: `Retell the story of {CLASSIC TALE} set in {NEW SETTING}:
-- Keep the basic plot but change characters or context to fit the setting.
-- Introduce two unique elements or characters fitting the new setting.
-- Maintain a similar moral or lesson by the end.`, tags: ["creative"] },
-    { id: "p44", title: "Genre Flip Storyteller", text: `Take this scenario: {BRIEF SCENE}.
-Rewrite it in a completely different genre:
-- Identify the original genre and the new genre.
-- Change the narration style and word choice to reflect the new genre's tone.
-- Keep the core events the same, but make it feel like a {NEW GENRE} story.`, tags: ["creative"] },
-    { id: "p45", title: "Alternate POV Narrative", text: `Rewrite {STORY OR SCENE} from the perspective of a different character:
-- Convey the character's unique voice, thoughts, and feelings about the events.
-- Reveal at least one detail or secret the original perspective didn't show.
-- Keep the events consistent, only change the viewpoint and interpretation.`, tags: ["creative"] },
-    { id: "p46", title: "Stand-up Routine Writer", text: `Craft a short stand-up comedy routine about {TOPIC}:
-- Open with a strong one-liner to grab attention.
-- Include 2–3 jokes or anecdotes, keeping them relatable and clean.
-- End with a callback or a punchline that ties the set together.`, tags: ["creative", "fun"] },
-    { id: "p47", title: "Introspective Q&A Guide", text: `I want to reflect on myself. Act as a thoughtful guide:
-- Start by asking an open-ended question about my background or values.
-- Based on my answer, ask a deeper follow-up or suggest a reflection.
-- Provide gentle insights or exercises if appropriate, focusing on helping me explore myself.`, tags: ["personal"] },
-    { id: "p48", title: "Shadow Self Dialogue", text: `You are my Jungian "shadow" self, the part of me I hide or repress:
-- Challenge my perspectives by pointing out inconsistencies or hidden feelings.
-- Ask me questions that make me examine uncomfortable or ignored aspects of myself.
-- Be honest but supportive, aiming to help me understand and integrate my shadow traits.`, tags: ["personal"] },
-    { id: "p49", title: "Future Self Letter", text: `Write a letter from me in 20 years, who has achieved {A GOAL}:
-- Describe what my future life is like and mention a few accomplishments.
-- Acknowledge the challenges I (the younger self) am facing now and how I overcame them.
-- Include advice, encouragement, and one lighthearted personal anecdote from the future.`, tags: ["personal"] },
-    { id: "p50", title: "Inner Child Conversation", text: `Help me talk to my inner child (my younger self):
-- As the inner child, start by expressing a concern or feeling.
-- As the adult self (also you), respond with reassurance and understanding.
-- Continue for a few exchanges, aiming to comfort the inner child and uncover any needs or messages.`, tags: ["personal"] },
-    { id: "p51", title: "Life Values Sorter", text: `Guide me to clarify my core values:
-- List 10 common values (e.g., honesty, creativity, security, family, achievement).
-- Ask me to choose the 3–5 that resonate most with me and explain why.
-- For each chosen value, suggest one way I can honor it in daily life.`, tags: ["personal"] },
-    { id: "p52", title: "Decision Clarity Coach", text: `I'm torn about {DECISION}. Help me analyze it:
-1. Ask me to describe the options I'm considering.
-2. For each option, have me list pros, cons, and feelings or values related to it.
-3. Summarize the key factors I mentioned for each option.
-4. Pose a final thought or question to help me decide, without directly choosing for me.`, tags: ["personal"] },
-    { id: "p53", title: "Gratitude Journal Companion", text: `Let's do a gratitude exercise:
-- Ask me to share one thing I'm grateful for today and why.
-- Respond with a positive reflection on that, and encourage detail or emotion.
-- Prompt me for one more small positive thing I noticed recently.
-- Conclude by suggesting I remember these moments on tough days.`, tags: ["personal"] },
-    { id: "p54", title: "Habits Improvement Planner", text: `I want to build better habits for {GOAL}:
-- Ask about my current routine and challenges with this habit.
-- Suggest one small, specific habit change to start with and how to implement it.
-- Outline a simple 1-week plan (when and how to do it each day).
-- Give a motivational tip to help me stick with it.`, tags: ["personal"] },
-    { id: "p55", title: "Dream Interpreter", text: `I will describe a dream I had. Act as a dream interpreter:
-- Ask me 2–3 questions to clarify details or emotions from the dream.
-- Offer two possible interpretations, explaining the symbolism or feelings that lead to each.
-- End with a gentle note on how I might reflect on or learn from this dream.`, tags: ["personal", "fun"] },
-    { id: "p56", title: "Resume Bullet Optimizer", text: `Take this resume bullet point: "{CURRENT BULLET}".
-- Rewrite it to start with a strong action verb and include a concrete result or metric.
-- Make sure it highlights a relevant skill and the impact of my work.
-- Keep it clear and concise (one sentence).`, tags: ["career", "writing"] },
-    { id: "p57", title: "Cover Letter Drafter", text: `Write a short cover letter paragraph for a {JOB TITLE} position at {COMPANY}:
-- Express enthusiasm for the company/role in one sentence.
-- Highlight 1–2 key achievements or skills that match the job requirements.
-- End with a confident statement about how you can contribute, and an eagerness to discuss further.`, tags: ["career", "writing"] },
-    { id: "p58", title: "Mock Interviewer", text: `Let's do a mock interview for a {POSITION}:
-- Ask me a common but challenging interview question for this role.
-- After my answer, give brief feedback (what I did well, what to improve).
-- Then ask a tougher follow-up question. Repeat for 3 questions total.
-(Wait for my answer each time.)`, tags: ["career"] },
-    { id: "p59", title: "Promotion Case Maker", text: `Help me prepare a case for why I deserve a promotion to {ROLE}:
-- Ask me to list some of my key accomplishments and contributions.
-- Using those, outline 3–5 bullet points linking my achievements to the new role's expectations.
-- Suggest a polite and confident way to phrase my request to my manager.`, tags: ["career"] },
-    { id: "p60", title: "Networking Message Composer", text: `Draft a LinkedIn message to connect with {PERSON (e.g., a professional in your field)}:
-- Start by introducing myself briefly and how I found them.
-- Mention a specific reason for reaching out (common interest or their work on X).
-- Keep the tone friendly and professional, and end with a subtle invitation to respond (like a question).`, tags: ["career", "writing"] },
-    { id: "p61", title: "Socratic Tutor", text: `I want to understand {CONCEPT}. Instead of explaining it outright, teach me Socratically:
-- Begin with a fundamental question to assess my understanding.
-- Based on a hypothetical answer, ask a follow-up that guides me closer to the concept.
-- Continue this Q&A approach until the concept is explained, encouraging me to reason it out.`, tags: ["education"] },
-    { id: "p62", title: "Exam Crammer", text: `I'm studying {TOPIC}. Give me a practice question and answer:
-1. Pose a challenging question that could be on an exam (don't immediately give the answer).
-2. Provide the step-by-step solution and correct answer.
-3. Explain why each step or answer is correct, so I can understand the reasoning.`, tags: ["education"] },
-    { id: "p63", title: "Language Quizmaster", text: `Help me practice {LANGUAGE}:
-- Ask me 5 multiple-choice questions in {LANGUAGE} on vocabulary or grammar.
-- Wait for my answer after each question, then tell me if I'm correct and what it means.
-- Make questions suitable for a {LEVEL} learner and include some cultural tidbits in explanations.`, tags: ["education", "games"] },
-    { id: "p64", title: "Curriculum Designer", text: `I'm learning {SKILL/TOPIC}. Outline a 4-week learning plan:
-- Week 1: foundational topics or skills (list 2–3 specific subtopics or exercises).
-- Week 2: build on complexity with 2–3 topics/exercises.
-- Week 3: advanced concepts or projects (2–3 items).
-- Week 4: integration and review activities.
-Include one recommended resource (book/site) for each week.`, tags: ["education"] },
-    { id: "p65", title: "Analogy Generator", text: `Explain {COMPLEX CONCEPT} using analogies:
-- Give one analogy related to sports or a game.
-- Give a second analogy using a daily life activity or object.
-- Give a third analogy using something in nature.
-Each analogy should be 2–3 sentences and make the concept easier to understand.`, tags: ["education", "creative"] },
-    { id: "p66", title: "Debate Club Simulator", text: `Let's simulate a fun debate:
-- You propose an eccentric debate topic and assign me a side (for or against).
-- I will write my argument; you (as the opponent) write a rebuttal with humor.
-- After one exchange each, you play a quirky judge and declare a winner with a funny reason.`, tags: ["games", "fun"] },
-    { id: "p67", title: "Boss Battle Trivia", text: `I want to play a trivia boss battle:
-- Invent a villainous boss character who will ask me 5 trivia questions about {TOPIC}.
-- The boss has 5 HP. Each correct answer I give reduces its HP by 1; each wrong answer, I lose 1 HP (starting at 5).
-- Mix multiple-choice and open-ended questions. After each, tell me if I'm right and update HP.
-- Add funny trash-talk from the boss. If I win, have the boss dramatically surrender; if I lose, a humorous defeat line.`, tags: ["games", "fun"] },
-    { id: "p68", title: "Text Adventure Game Master", text: `You are a text adventure game:
-- Begin by describing a scene and the player's situation, then ask what I do.
-- Wait for my input, then describe the result of my action and the new situation.
-- Include interactive elements like items or characters to interact with.
-Continue the story until I type "end".`, tags: ["games", "fun"] },
-    { id: "p69", title: "Riddle Master", text: `Let's play a riddle game:
-- You give me one riddle to solve (moderate difficulty).
-- If I guess incorrectly, provide a subtle hint and let me try again.
-- If I can't get it or guess correctly, reveal the answer and briefly explain it.
-Then optionally offer another riddle to continue.`, tags: ["games", "fun"] },
-    { id: "p70", title: "Twenty Questions", text: `Let's play Twenty Questions:
-- Think of something (object, person, concept) but don't tell me.
-- I will ask yes/no questions to guess it. Only answer yes, no, or unsure.
-- Keep track of the number of questions (up to 20).
-After 20 questions, I'll make a guess and you reveal if I'm correct and what the answer was.`, tags: ["games", "fun"] },
-    { id: "p71", title: "Mad Libs Game", text: `Let's play Mad Libs:
-- First, ask me to provide a list of words (e.g., a noun, a verb ending in -ing, an adjective, etc.) needed for a funny story.
-- Once I give them, plug them into a short story template you've prepared.
-- Present the final humorous story with my words filled in.`, tags: ["games", "fun"] },
-    { id: "p72", title: "ASCII Artist", text: `Convert the description "{SCENE OR OBJECT}" into ASCII art:
-- Use characters to sketch a simple representation no more than 40 characters wide.
-- Capture the basic shape or outline so it's recognizable.
-- Keep it text-only, using spaces and symbols creatively.`, tags: ["images", "fun"] },
-    { id: "p73", title: "Image Description Generator", text: `Imagine an image of {SCENE}.
-Describe it in detail as if writing alt-text:
-- Mention the main subjects, their positions, and actions.
-- Include details about the setting (background, lighting, colors).
-- Keep it objective (describe only what is visible, no interpretations), in 2–3 sentences.`, tags: ["images"] },
-    { id: "p74", title: "Emoji Scene Maker", text: `Describe {SCENE or STORY} using only emojis:
-- Use a sequence of 10–20 emojis to depict the key elements and actions.
-- Try to convey the narrative or scene clearly through symbols.
-- After the emoji sequence, provide a one-line explanation translating it back to words.`, tags: ["images", "fun"] },
-    { id: "p75", title: "Whimsical Image Prompt", text: `Give me a creative prompt for an AI image generator:
-- The scene should combine two unlikely themes (e.g., "medieval dragons" and "modern city").
-- Include details about atmosphere, lighting, or art style to make it vivid.
-- Keep the prompt under 40 words, and make it imaginative and fun.`, tags: ["images", "creative"] },
-    { id: "p76", title: "Prompt Critic", text: `Evaluate this ChatGPT prompt I've written: "{PROMPT}".
-- Identify any unclear instructions or assumptions in it.
-- Suggest two specific improvements to make it more precise or effective.
-- Provide a revised version of the prompt that addresses these improvements.`, tags: ["meta"] },
-    { id: "p77", title: "Travel Itinerary Planner", text: `Plan a 1-week trip to {DESTINATION} focusing on {INTEREST (e.g., food, history, nature)}:
-- Outline activities for each day (morning, afternoon, evening) with specific places or experiences.
-- Include at least one local dish to try and one travel tip.
-- Keep the itinerary realistic (consider travel time) and engaging.`, tags: ["lifestyle"] },
-    { id: "p78", title: "Recipe Generator", text: `I'm craving {DISH or INGREDIENTS}. Give me a recipe:
-- List ingredients with exact quantities for 2 servings.
-- Provide step-by-step cooking instructions.
-- Include one cooking tip or variation suggestion at the end.`, tags: ["lifestyle"] },
-    { id: "p79", title: "Room Makeover Ideas", text: `I want to redo my {ROOM} in a {STYLE} style:
-- Suggest a color scheme (walls, furniture, accents).
-- Recommend 3 changes or additions (furniture or decor) to achieve the style.
-- Include one tip to make the space comfortable and personalized.`, tags: ["lifestyle"] },
-    { id: "p80", title: "Gift Brainstormer", text: `Suggest a creative gift for {RECIPIENT} who likes {INTERESTS}:
-- Provide 3 gift ideas: one inexpensive, one mid-range, one high-end.
-- Explain why each gift suits their interests or personality in one sentence.
-- Include a personal touch idea (e.g., customization or how to present it).`, tags: ["lifestyle"] },
-    { id: "p81", title: "Movie Reviewer", text: `Write a movie review for "{MOVIE}":
-- Briefly summarize the premise without spoilers.
-- Discuss one aspect (acting, plot, visuals, etc.) that stood out positively, with an example.
-- Mention one thing that could have been better.
-- End with your overall recommendation (and who might enjoy it).`, tags: ["writing", "creative"] },
-    { id: "p82", title: "Book Club Synopsis", text: `Provide a synopsis for "{BOOK}":
-- Paragraph 1: introduce the setting and main characters.
-- Paragraph 2: outline the central conflict or plot (no major spoilers).
-- Paragraph 3: discuss a key theme or takeaway from the book.
-Keep it engaging and informative for someone who hasn't read it.`, tags: ["writing"] },
-    { id: "p83", title: "Style Imitator", text: `Rewrite the following text in the style of {STYLE OR PERSONA}:
-- Use vocabulary and tone characteristic of that style.
-- Keep the original meaning and facts.
-For example, if style is "Shakespearean", use archaic terms and a dramatic tone.`, tags: ["writing", "creative"] },
-    { id: "p84", title: "FAQ Generator", text: `Read the text and create an FAQ section:
-- Come up with 3 questions that a reader might ask for clarification.
-- Answer each question concisely based on the information in the text.
-- Ensure the FAQs cover different key points from the text.`, tags: ["writing"] },
-    { id: "p85", title: "Feedback Sentiment Analyzer", text: `Analyze these customer feedback comments:
-- For each comment, label it as Positive, Negative, or Neutral.
-- Quote a short phrase from the comment that supports your label.
-- If a comment is Negative, suggest one improvement the team could make to address it.`, tags: ["business", "data"] },
-    { id: "p86", title: "Timeline Summarizer", text: `Turn the following event description into a timeline:
-- Identify 5 key events and list them in chronological order.
-- For each, give a date (if provided or infer an order) and a one-sentence description of what happened.
-- Make sure the timeline flows and captures the main storyline.`, tags: ["writing"] },
-    { id: "p87", title: "Crossword Puzzle Maker", text: `Create a mini crossword puzzle themed around {THEME}:
-- Come up with 5 clues. For each, give the clue and the number of letters (e.g., "1. A four-legged pet (3)").
-- After listing clues, provide the answer key (clue number and answer for each).
-Make clues witty or interesting, and ensure answers fit the theme.`, tags: ["games", "fun"] },
-    { id: "p88", title: "Song Parodist", text: `Write a parody of the song "{SONG TITLE}" about {TOPIC}:
-- Maintain the rhythm and structure of the original chorus (no need for all verses).
-- Include clever references or puns related to {TOPIC}.
-- Keep the tone lighthearted and funny (and avoid offensive language).`, tags: ["creative", "fun"] },
-    { id: "p89", title: "Haiku Summary", text: `Summarize {TOPIC OR TEXT} as a haiku:
-- Use the 5-7-5 syllable pattern.
-- Capture the essence or feeling of the topic in just 3 lines.
-For example, a haiku on rain might be: "Gray sky weeps softly / Earth blooms under gentle taps / Life drinks in silence."`, tags: ["creative", "fun"] },
-    { id: "p90", title: "Time Traveler Interviewer", text: `You are interviewing someone from the year {YEAR} (or {ERA}):
-- Set the scene by briefly describing the time period.
-- Ask 3 questions one by one about their life or world (waiting for their answer each time).
-- Provide the interviewee's answers, showcasing perspectives or facts from that time.
-- Keep the dialogue engaging and insightful about differences between now and then.`, tags: ["creative", "education"] },
-    { id: "p91", title: "Mythical Creature Biographer", text: `Invent a mythical creature and write an entry as if for a fantasy encyclopedia:
-- Describe its appearance and any special powers or behaviors.
-- Tell a short legend or story about it (how it was discovered, or an encounter with it).
-- Mention if it's friendly, dangerous, or misunderstood, and any habitat or diet info.`, tags: ["creative", "fun"] },
-    { id: "p92", title: "Mnemonic Maker", text: `I need to remember {LIST OR CONCEPT}. Create a mnemonic:
-- If it's a list of items, come up with a catchy phrase or acronym where each word/letter stands for an item.
-- If it's a concept with parts, make a vivid analogy or phrase that encapsulates it.
-- Make the mnemonic easy to recall and a bit humorous or unusual to stick in memory.`, tags: ["education", "creative"] },
-    { id: "p93", title: "Detective Mystery Roleplay", text: `Let's play detective:
-- Present a short mystery scenario (a crime or puzzle) with a few clues.
-- Allow me to ask questions to investigate; answer based on clues and logic.
-- After I guess the solution (or if I give up), reveal the culprit or answer and explain the key clues that led to it.
-Keep the mystery solvable and engaging.`, tags: ["games", "fun"] },
-    { id: "p94", title: "Color Palette Generator", text: `Generate a color palette for {THEME or MOOD}:
-- Provide 5 colors with HEX codes.
-- Give a one-word description for each color's vibe or suggested use (e.g., "Background", "Accent", "Energetic").
-Ensure the colors complement each other and reflect the theme.`, tags: ["images"] },
-    { id: "p95", title: "Release Notes Composer", text: `Turn these commit messages/changes into user-friendly release notes:
-- Group related changes under headings like "New Features", "Improvements", "Bug Fixes".
-- Rewrite each change in a clear, non-technical sentence (focus on what the user benefits or sees).
-- Keep the tone neutral and concise.`, tags: ["engineering", "writing"] },
-    { id: "p96", title: "Social Post Stylist", text: `Craft a post for {PLATFORM} about {CONTENT}:
-- Keep it within the platform's typical character limit.
-- Use a tone appropriate for the platform (e.g., witty for Twitter, friendly storytelling for Instagram).
-- Include an emoji and a relevant hashtag if suitable.`, tags: ["writing", "business"] },
-    { id: "p97", title: "Dialogue Scene Creator", text: `Write a scene mainly in dialogue between {CHARACTER A} and {CHARACTER B}:
-- Establish who the characters are and their situation in one line, then use dialogue.
-- Let their personalities show through what they say.
-- Through the conversation, reveal a secret or solve a misunderstanding by the end.`, tags: ["creative", "writing"] },
-    { id: "p98", title: "Math Problem Solver", text: `Solve the following math word problem step-by-step:
-- Restate the problem in simpler terms.
-- Show how to set up the equation or process to solve it.
-- Work through each step, explaining the reasoning.
-- Provide the final answer with appropriate units.`, tags: ["education"] },
-    { id: "p99", title: "Apology Letter Drafter", text: `Help me write an apology letter to {PERSON} about {ISSUE}:
-- Start with a clear apology and take responsibility.
-- Acknowledge their feelings and the impact of my actions.
-- Offer a way to make amends or assure it won't happen again.
-- Keep the tone sincere and respectful.`, tags: ["personal", "writing"] },
-    { id: "p100", title: "Fortune Cookie Writer", text: `Come up with 3 fortune cookie messages:
-- Each should be a single sentence of wisdom or humor.
-- Keep them positive or insightful (and family-friendly).
-For example: "A fresh start will put you on your way." Now your turn!`, tags: ["fun", "creative"] }
-  ];
-
-
-  const TAG_ALL = "all";
-  const state = { search: "", tag: TAG_ALL };
-  const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
-  const CLASS_CARD = "card";
-  /** UNIFORM_CARD_CLASS enforces consistent sizing and layout for cards. */
-  const UNIFORM_CARD_CLASS = "uniform-card";
-  /** GRID_ITEM_CLASSES defines responsive column spans for cards. */
-  const GRID_ITEM_CLASSES = "s12 m6 l4";
-  const CLASS_CONTENT = "content";
-  const CLASS_ACTIONS = "actions";
-  const CLASS_BUTTON = "button";
-  const CLASS_CHIPS = "chips";
-  const CLASS_CHIP = "chip";
-  /** END_ALIGNMENT_CLASS aligns elements to the end of a flex container. */
-  const END_ALIGNMENT_CLASS = "end";
-  /** CARD_HEADER_CLASS groups a card's title and tags. */
-  const CARD_HEADER_CLASS = "card-header";
-  /** CARD_HEADER_MIN_HEIGHT_CLASS reserves consistent vertical space for card titles. */
-  const CARD_HEADER_MIN_HEIGHT_CLASS = "min-h-48";
-  /** GROW_CLASS expands a flex child to fill available vertical space. */
-  const GROW_CLASS = "grow";
-  /** FLEX_EXPAND_VALUE assigns flex:1 to an element. */
-  const FLEX_EXPAND_VALUE = "1";
-  /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
-  const COLUMN_STRETCH_CLASS = "column stretch";
-  /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
-  const SNACKBAR_CLASS_NAME = "snackbar";
-  /** COPY_SNACKBAR_ID identifies the global snackbar element for copy confirmations. */
-  const COPY_SNACKBAR_ID = "copySnackbar";
-  const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
-  const COPY_BUTTON_LABEL = "Copy";
-  /** COPY_SNACKBAR_MESSAGE is the text shown after a prompt is copied. */
-  const COPY_SNACKBAR_MESSAGE = "Copied \u2713";
-  /** HTML tag names used to construct prompt cards. */
-  const TAG_ARTICLE = "article";
-  const TAG_DIV = "div";
-  const TAG_H3 = "h3";
-  const TAG_PRE = "pre";
-  const TAG_NAV = "nav";
-  const TAG_BUTTON = "button";
-  /** Attribute names and values for prompt card elements. */
-  const ATTRIBUTE_ROLE = "role";
-  const ROLE_LIST_ITEM = "listitem";
-  const ATTRIBUTE_ARIA_LABEL = "aria-label";
-  const ATTRIBUTE_TYPE = "type";
-  const BUTTON_TYPE_BUTTON = "button";
-  const DATA_ACTIVE_ATTRIBUTE = "data-active";
-  const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
-  const EVENT_INPUT = "input";
-  const EVENT_CLICK = "click";
-  const EVENT_KEYDOWN = "keydown";
-  const EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded";
-  const KEY_ENTER = "Enter";
-  const KEY_SLASH = "/";
-  /**
-   * selectOne returns the first DOM element matching the selector.
-   * @param {string} selector CSS selector used to query the DOM.
-   * @param {ParentNode} [root=document] optional root element to scope the search.
-   * @returns {Element|null} first matching element or null.
-   */
-  const selectOne = (selector, root = document) => root.querySelector(selector);
-  /**
-   * selectAll returns all DOM elements matching the selector as an array.
-   * @param {string} selector CSS selector used to query the DOM.
-   * @param {ParentNode} [root=document] optional root element to scope the search.
-   * @returns {Element[]} array of matching elements.
-   */
-  const selectAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-  /**
-   * debounce delays invoking the provided function until after a wait period.
-   * @param {Function} targetFunction function to debounce.
-   * @param {number} [delayMilliseconds=120] delay duration in milliseconds.
-   * @returns {Function} debounced wrapper function.
-   */
-  const debounce = (targetFunction, delayMilliseconds = 120) => {
-    let timeoutIdentifier;
-    return (...functionArguments) => {
-      clearTimeout(timeoutIdentifier);
-      timeoutIdentifier = setTimeout(() => targetFunction(...functionArguments), delayMilliseconds);
+    // ---------- Helpers ----------
+    const selectOne = (sel, root = document) => root.querySelector(sel);
+    const selectAll = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const debounce = (fn, ms = 120) => {
+        let t;
+        return (...a) => {
+            clearTimeout(t);
+            t = setTimeout(() => fn(...a), ms);
+        };
     };
-  };
-  const CARRIAGE_RETURN_PATTERN = /\r/g;
-  const EMPTY_STRING = "";
-  /** sanitize removes carriage return characters from text. */
-  const sanitize = (inputText) => inputText.replace(CARRIAGE_RETURN_PATTERN, EMPTY_STRING);
-  /**
-   * matches determines if a prompt satisfies the search query and selected tag.
-   * @param {Object} promptItem prompt to evaluate.
-   * @param {string} query search string in lowercase.
-   * @param {string} tagName chosen tag filter.
-   * @returns {boolean} true when the prompt matches both filters.
-   */
-  const matches = (promptItem, query, tagName) => {
-    const tagIsAllowed = tagName === TAG_ALL || promptItem.tags.includes(tagName);
-    if (!query) return tagIsAllowed;
-    const combinedText = (promptItem.title + " " + promptItem.text + " " + promptItem.tags.join(" ")).toLowerCase();
-    return tagIsAllowed && query.split(/\s+/).every(searchToken => combinedText.includes(searchToken));
-  };
-  /**
-   * uniqueTags gathers all distinct tags from the prompts list.
-   * @returns {string[]} array beginning with the all tag followed by sorted tags.
-   */
-  function uniqueTags(){
-    const tagSet = new Set();
-    PROMPTS.forEach(promptItem => promptItem.tags.forEach(tagName => tagSet.add(tagName)));
-    return [TAG_ALL, ...Array.from(tagSet).sort((tagA, tagB) => tagA.localeCompare(tagB))];
-  }
-  /** renderChips populates the tag filter bar with chip buttons and reapplies Beer.css styling. */
-  function renderChips() {
-    const chipBarElement = selectOne("#chipBar");
-    chipBarElement.innerHTML = "";
-    const chipContainerElement = document.createElement("div");
-    chipContainerElement.className = CLASS_CHIPS;
-    uniqueTags().forEach(tagName => {
-      const chipButtonElement = document.createElement("button");
-      chipButtonElement.className = CLASS_CHIP;
-      chipButtonElement.type = "button";
-      chipButtonElement.textContent = tagName;
-      chipButtonElement.setAttribute(DATA_ACTIVE_ATTRIBUTE, tagName === state.tag ? "true" : "false");
-      chipButtonElement.onclick = () => { state.tag = tagName; persistState(); renderGrid(); highlightActiveChip(); };
-      chipContainerElement.appendChild(chipButtonElement);
-    });
-    chipBarElement.appendChild(chipContainerElement);
-    ui(CLASS_CHIPS, chipContainerElement);
-  }
-  /**
-   * highlightActiveChip updates the visual state of the selected tag chip.
-   * @returns {void}
-   */
-  function highlightActiveChip() {
-    selectAll(`#chipBar .${CLASS_CHIP}`).forEach(chipElement =>
-      chipElement.setAttribute(DATA_ACTIVE_ATTRIBUTE, String(chipElement.textContent === state.tag))
-    );
-  }
+    const sanitize = s => s.replace(/\r/g, "");
+    const escapeHTML = raw => raw.replace(/[&<>\"']/g, ch => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[ch]));
+    const withLineBreaks = raw => escapeHTML(raw).replace(/\n/g, "<br>");
 
-  /**
-   * renderGrid displays cards that match the current search and tag filters and reapplies Beer.css styling.
-   * @returns {void}
-   */
-  function renderGrid() {
-    const gridElement = selectOne("#grid");
-    const query = state.search.trim().toLowerCase();
-    const matchingPrompts = PROMPTS.filter(promptItem => matches(promptItem, query, state.tag));
-    gridElement.innerHTML = "";
-    matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
-    ui(CLASS_CARD, gridElement);
-    if (matchingPrompts.length === 0) {
-      const messageParagraphElement = document.createElement("p");
-      messageParagraphElement.classList.add(
-        TEXT_CLASS,
-        SECONDARY_CLASS,
-        CENTER_CLASS,
-        SPAN_ALL_COLUMNS_CLASS
-      );
-      messageParagraphElement.textContent = NO_MATCH_MESSAGE;
-      gridElement.appendChild(messageParagraphElement);
+    // ---------- Data (unchanged) ----------
+    let PROMPTS = PROMPTS_DATA;
+    // ---------- UI builders ----------
+    function uniqueTags() {
+        const s = new Set();
+        PROMPTS.forEach(p => p.tags.forEach(t => s.add(t)));
+        return [TAG_ALL, ...Array.from(s).sort((a, b) => a.localeCompare(b))];
     }
-  }
 
-    /** createCard builds a uniform-height card element for a prompt. */
-    function createCard(promptItem) {
-      const cardElement = document.createElement(TAG_ARTICLE);
-      cardElement.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES} ${COLUMN_STRETCH_CLASS} ${UNIFORM_CARD_CLASS}`;
-      cardElement.setAttribute(ATTRIBUTE_ROLE, ROLE_LIST_ITEM);
-      cardElement.tabIndex = 0;
+    function renderChips() {
+        const host = selectOne("#chipBar");
+        host.innerHTML = "";
+        const wrap = document.createElement("div");
+        wrap.className = CLASS_CHIPS;
+        uniqueTags().forEach(tagName => {
+            const chip = document.createElement("button");
+            chip.className = CLASS_CHIP;
+            chip.type = "button";
+            chip.textContent = tagName;
+            chip.setAttribute("data-active", tagName === state.tag ? "true" : "false");
+            chip.onclick = () => {
+                state.tag = tagName;
+                persistState();
+                renderGrid();
+                highlightActiveChip();
+            };
+            wrap.appendChild(chip);
+        });
+        host.appendChild(wrap);
+        ui(CLASS_CHIPS, wrap);
+    }
 
-      const contentElement = document.createElement(TAG_DIV);
-      contentElement.className = CLASS_CONTENT;
-      contentElement.classList.add(GROW_CLASS);
-      contentElement.style.flex = FLEX_EXPAND_VALUE;
+    function highlightActiveChip() {
+        selectAll(`#chipBar .${CLASS_CHIP}`).forEach(el =>
+            el.setAttribute("data-active", String(el.textContent === state.tag))
+        );
+    }
 
-      const headerWrapperElement = document.createElement(TAG_DIV);
-      headerWrapperElement.classList.add(CARD_HEADER_CLASS, CARD_HEADER_MIN_HEIGHT_CLASS);
+    function matches(p, q, tag) {
+        const tagOK = tag === TAG_ALL || p.tags.includes(tag);
+        if (!q) return tagOK;
+        const text = (p.title + " " + p.text + " " + p.tags.join(" ")).toLowerCase();
+        return tagOK && q.split(/\s+/).every(tok => text.includes(tok));
+    }
 
-      const titleHeadingElement = document.createElement(TAG_H3);
-      titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
-      headerWrapperElement.appendChild(titleHeadingElement);
-
-      const chipContainerElement = document.createElement(TAG_DIV);
-      chipContainerElement.className = CLASS_CHIPS;
-      promptItem.tags.forEach(tagName => {
-        const chipElement = document.createElement(TAG_DIV);
-        chipElement.className = CLASS_CHIP;
-        chipElement.textContent = tagName;
-        chipContainerElement.appendChild(chipElement);
-      });
-      headerWrapperElement.appendChild(chipContainerElement);
-      contentElement.appendChild(headerWrapperElement);
-
-      const textWrapperElement = document.createElement(TAG_DIV);
-      textWrapperElement.classList.add(GROW_CLASS);
-      textWrapperElement.style.flex = FLEX_EXPAND_VALUE;
-      const textElement = document.createElement(TAG_PRE);
-      textElement.className = TEXT_CLASS;
-      textElement.textContent = promptItem.text;
-      textWrapperElement.appendChild(textElement);
-      contentElement.appendChild(textWrapperElement);
-
-      cardElement.appendChild(contentElement);
-
-      const actionsElement = document.createElement(TAG_NAV);
-      actionsElement.className = `${CLASS_ACTIONS} ${END_ALIGNMENT_CLASS}`;
-
-      const copyButtonElement = document.createElement(TAG_BUTTON);
-      copyButtonElement.className = CLASS_BUTTON;
-      copyButtonElement.type = BUTTON_TYPE_BUTTON;
-      const copyLabel = `${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`;
-      copyButtonElement.setAttribute(ATTRIBUTE_ARIA_LABEL, copyLabel);
-      copyButtonElement.innerHTML = copyIcon() + `<span>${COPY_BUTTON_LABEL}</span>`;
-      copyButtonElement.onclick = () => copyPrompt(promptItem);
-      actionsElement.appendChild(copyButtonElement);
-
-      cardElement.appendChild(actionsElement);
-
-      cardElement.addEventListener(EVENT_KEYDOWN, event => {
-        if (event.key === KEY_ENTER) {
-          event.preventDefault();
-          copyPrompt(promptItem);
+    function renderGrid() {
+        const grid = selectOne("#grid");
+        const q = state.search.trim().toLowerCase();
+        const items = PROMPTS.filter(p => matches(p, q, state.tag));
+        grid.innerHTML = "";
+        items.forEach(p => grid.appendChild(createCard(p)));
+        ui(CLASS_CARD, grid);
+        if (!items.length) {
+            const empty = document.createElement("p");
+            empty.className = "text secondary center s12";
+            empty.textContent = "No prompts match your search/filter.";
+            grid.appendChild(empty);
         }
-      });
-      return cardElement;
     }
 
-  /**
-   * copyPrompt writes a prompt's text to the clipboard and shows a snackbar message.
- * @param {Object} promptItem prompt data to copy.
- * @returns {void}
- */
-  function copyPrompt(promptItem) {
-    const content = `${promptItem.text}`.trim();
-    navigator.clipboard.writeText(sanitize(content)).then(() => {
-      const snackbarElement = selectOne(`#${COPY_SNACKBAR_ID}`);
-      snackbarElement.textContent = COPY_SNACKBAR_MESSAGE;
-      ui(SNACKBAR_CLASS_NAME, snackbarElement);
-    }).catch(() => {
-      const textareaElement = document.createElement("textarea");
-      textareaElement.value = content;
-      textareaElement.style.position = "fixed";
-      textareaElement.style.left = "-9999px";
-      document.body.appendChild(textareaElement);
-      textareaElement.select();
-      document.execCommand("copy");
-      textareaElement.remove();
+    function createCard(p) {
+        const card = document.createElement("article");
+        card.className = `${CLASS_CARD} ${GRID_ITEM_CLASSES}`;
+        card.setAttribute("role", "listitem");
+        card.tabIndex = 0;
+
+        const content = document.createElement("div");
+        content.className = CLASS_CONTENT;
+
+        // header
+        const header = document.createElement("div");
+        const h3 = document.createElement("h3");
+        h3.innerHTML = escapeHTML(p.title);
+        header.appendChild(h3);
+
+        const chips = document.createElement("div");
+        chips.className = CLASS_CHIPS;
+        p.tags.forEach(tag => {
+            const c = document.createElement("div");
+            c.className = CLASS_CHIP;
+            c.textContent = tag;
+            chips.appendChild(c);
+        });
+        header.appendChild(chips);
+        content.appendChild(header);
+
+        // body text (wraps naturally)
+        const bodyWrap = document.createElement("div");
+        const body = document.createElement("div");
+        body.className = TEXT_CLASS;
+        body.innerHTML = withLineBreaks(p.text);
+        bodyWrap.appendChild(body);
+        content.appendChild(bodyWrap);
+
+        card.appendChild(content);
+
+        // 3) Actions pinned bottom-right by tiny CSS above
+        const actions = document.createElement("nav");
+        actions.className = `${CLASS_ACTIONS}`;
+
+        const copyBtn = document.createElement("button");
+        copyBtn.className = CLASS_BUTTON;
+        copyBtn.type = "button";
+        copyBtn.setAttribute("aria-label", `Copy prompt: ${p.title}`);
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span>${COPY_BUTTON_LABEL}</span>`;
+        copyBtn.onclick = () => copyPrompt(p);
+        actions.appendChild(copyBtn);
+
+        card.appendChild(actions);
+
+        card.addEventListener(EVENT_KEYDOWN, e => {
+            if (e.key === KEY_ENTER) {
+                e.preventDefault();
+                copyPrompt(p);
+            }
+        });
+        return card;
+    }
+
+    function copyPrompt(p) {
+        const content = `${p.text}`.trim();
+        navigator.clipboard.writeText(sanitize(content)).then(() => {
+            const s = selectOne(`#${COPY_SNACKBAR_ID}`);
+            s.textContent = "Copied ✓";
+            ui(SNACKBAR_CLASS_NAME, s); // Beer snackbar trigger
+        }).catch(() => {
+            const ta = document.createElement("textarea");
+            ta.value = content;
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+        });
+    }
+
+    const onSearch = debounce(v => {
+        state.search = v;
+        persistState();
+        renderGrid();
+    }, 80);
+
+    function persistState() {
+        try {
+            localStorage.setItem(STORAGE_KEY_PROMPT_STATE, JSON.stringify(state));
+        } catch {
+        }
+    }
+
+    function restoreState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY_PROMPT_STATE);
+            if (raw) {
+                const p = JSON.parse(raw);
+                if (typeof p.search === "string") state.search = p.search;
+                if (typeof p.tag === "string") state.tag = p.tag;
+            }
+        } catch {
+        }
+    }
+
+    // ---------- Theme toggle ----------
+    function setThemeControls(theme) {
+        const isDark = theme === DARK_THEME;
+        selectOne("#themeSwitch").checked = isDark;
+        selectOne("#themeIcon").textContent = isDark ? LIGHT_MODE_ICON : DARK_MODE_ICON;
+    }
+
+    function toggleThemeViaSwitch() {
+        const next = document.body.classList.contains(DARK_THEME) ? LIGHT_THEME : DARK_THEME;
+        document.body.classList.remove(LIGHT_THEME, DARK_THEME);
+        document.body.classList.add(next);
+        localStorage.setItem(THEME_STORAGE_KEY, next);
+        setThemeControls(next);
+    }
+
+    // ---------- Init ----------
+    document.addEventListener(EVENT_DOM_CONTENT_LOADED, () => {
+        const activeTheme = initializeTheme();
+        setThemeControls(activeTheme);
+
+        restoreState();
+        renderChips();
+        renderGrid();
+
+        const input = selectOne("#searchInput");
+        input.value = state.search;
+        input.addEventListener(EVENT_INPUT, e => onSearch(e.target.value));
+        selectOne("#themeSwitch").addEventListener(EVENT_CLICK, toggleThemeViaSwitch);
+
+        window.addEventListener(EVENT_KEYDOWN, e => {
+            if (e.key === KEY_SLASH && document.activeElement !== input) {
+                e.preventDefault();
+                input.focus();
+                input.select();
+            }
+        });
+
+        ui(); // reapply Beer styles
     });
-  }
-  /**
-   * copyIcon generates SVG markup for the copy button.
-   * @returns {string} SVG markup string.
-   */
-  function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
-  const HTML_ESCAPE_PATTERN = /[&<>"']/g;
-  const HTML_ESCAPE_REPLACEMENTS = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#39;"
-  };
-  /** escapeHTML converts reserved HTML characters to escape sequences. */
-  function escapeHTML(rawText){ return rawText.replace(HTML_ESCAPE_PATTERN, character => HTML_ESCAPE_REPLACEMENTS[character]); }
-
-  /**
-   * onSearch updates the search text and re-renders the prompt grid.
-   * @param {string} searchValue value from the search input field.
-   * @returns {void}
-   */
-  const onSearch = debounce(searchValue => { state.search = searchValue; persistState(); renderGrid(); }, 80);
-  /**
-   * persistState saves the current search and tag state in localStorage.
-   */
-  function persistState() {
-    try {
-      localStorage.setItem(STORAGE_KEY_PROMPT_STATE, JSON.stringify(state));
-    } catch {}
-  }
-  /**
-   * restoreState loads persisted search and tag state from localStorage.
-   */
-  function restoreState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY_PROMPT_STATE);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (typeof parsed.search === "string") state.search = parsed.search;
-        if (typeof parsed.tag === "string") state.tag = parsed.tag;
-      }
-    } catch {}
-  }
-
-  /** toggleTheme switches between light and dark themes. */
-  function toggleTheme() {
-    const currentTheme = document.body.classList.contains(DARK_THEME) ? DARK_THEME : LIGHT_THEME;
-    const nextTheme = currentTheme === DARK_THEME ? LIGHT_THEME : DARK_THEME;
-    document.body.classList.remove(LIGHT_THEME, DARK_THEME);
-    document.body.classList.add(nextTheme);
-    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-    const themeIconElement = selectOne(`#${THEME_TOGGLE_BUTTON_ID} span`);
-    themeIconElement.textContent = nextTheme === DARK_THEME ? LIGHT_MODE_ICON : DARK_MODE_ICON;
-  }
-
-  /** init prepares interactive elements. */
-  function init() {
-    initializeTheme();
-    initializeLayout();
-    restoreState();
-    renderChips();
-    renderGrid();
-    const searchInputElement = selectOne("#searchInput"),
-          themeToggleButton = selectOne(`#${THEME_TOGGLE_BUTTON_ID}`);
-    searchInputElement.value = state.search;
-    searchInputElement.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
-    themeToggleButton.addEventListener(EVENT_CLICK, toggleTheme);
-    window.addEventListener(EVENT_KEYDOWN, event => {
-      if (event.key === KEY_SLASH && document.activeElement !== searchInputElement) {
-        event.preventDefault();
-        searchInputElement.focus();
-        searchInputElement.select();
-      }
-    });
-  }
-  /** onContentLoaded initializes components then reapplies Beer.css styling. */
-  function onContentLoaded() {
-    init();
-    ui();
-  }
-  document.addEventListener(EVENT_DOM_CONTENT_LOADED, onContentLoaded);
 </script>
 </body>
 </html>
