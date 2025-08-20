@@ -3,159 +3,85 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prompt Bubbles — Curated ChatGPT Prompts</title>
+<title>Prompt Bubbles — Curated ChatGPT Prompts</title>
   <meta name="color-scheme" content="dark light" />
-  <style>
-    :root{
-      --bg-a:#0b1016; --bg-b:#0f1620; --bg-c:#172230;
-      --text-0:#eaf1fb; --text-1:#aab7cc;
-      --brand:#6ee7ff; --brand-2:#b892ff;
-      --chip:#131c28; --chip-text:#d9e6fb;
-      --ring:#7ad1ff; --ok:#70ffa6;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
+  <script>
+    const THEME_STORAGE_KEY = "preferred-theme";
+    const LIGHT_THEME = "light";
+    const DARK_THEME = "dark";
+    /** initializeTheme applies a persisted theme preference. */
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+      const selectedTheme = savedTheme === DARK_THEME ? DARK_THEME : LIGHT_THEME;
+      document.body.classList.remove(LIGHT_THEME, DARK_THEME);
+      document.body.classList.add(selectedTheme);
     }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg-a:#f8fbff; --bg-b:#eef4ff; --bg-c:#e8effb;
-        --text-0:#0f1c2b; --text-1:#3a4f68;
-        --chip:#e9f1ff; --chip-text:#0f1c2b;
-        --ring:#2a83cf; --shadow:0 8px 24px rgba(0,40,80,.12);
-      }
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica Neue,Arial,Noto Sans,Apple Color Emoji,Segoe UI Emoji;
-      color:var(--text-0);
-      /* Smooth, non-tiled background */
-      background: linear-gradient(130deg, var(--bg-a) 0%, var(--bg-b) 40%, var(--bg-c) 100%) fixed;
-      position:relative;
-    }
-    /* Subtle vignette for depth, not blotches */
-    body::before{
-      content:"";
-      position:fixed; inset:0; pointer-events:none;
-      background: radial-gradient(1200px 800px at 50% -200px, rgba(255,255,255,.08), transparent 60%),
-      radial-gradient(1200px 800px at 50% 120%, rgba(255,255,255,.04), transparent 60%);
-      opacity:.5;
-    }
-
-    .shell{max-width:1200px; margin:0 auto; padding:18px clamp(16px,4vw,32px) 40px;}
-
-    /* --- TOP SEARCH BAR --- */
-    .topsearch{
-      position:sticky; top:0; z-index:20;
-      padding:14px 0;
-      backdrop-filter:saturate(1.1) blur(8px);
-      -webkit-backdrop-filter:saturate(1.1) blur(8px);
-      background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,0));
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .searchrow{ display:grid; grid-template-columns: 1fr auto; gap:12px; align-items:center; }
-    .searchbox{ position:relative; }
-    .searchbox input{
-      width:100%;
-      padding:18px 56px 18px 56px;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      color:var(--text-0);
-      font-size:18px;
-      outline:none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), var(--shadow);
-    }
-    .searchbox input:focus{ outline:2px solid var(--ring); outline-offset:2px }
-    .searchbox svg{ position:absolute; left:18px; top:50%; transform:translateY(-50%); width:22px; height:22px; opacity:.9; }
-    .search-clear{ position:absolute; right:14px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:var(--text-1); cursor:pointer; padding:8px; border-radius:10px; }
-    .search-clear:hover{ color:var(--text-0) }
-
-    /* --- TITLE + CHIPS --- */
-    header{ padding:18px 0 6px; }
-    .titlebar{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-    .logo{ width:42px; height:42px; border-radius:12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      box-shadow:var(--shadow);
-    }
-    h1{ margin:0; font-size:clamp(22px,3.2vw,34px); font-weight:800; letter-spacing:.2px; }
-    .subtitle{ margin:6px 0 0 56px; color:var(--text-1); font-size:14px; }
-
-    .chips{ margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
-    .chip{
-      border:1px solid rgba(255,255,255,.14);
-      background:var(--chip); color:var(--chip-text);
-      padding:8px 12px; border-radius:999px; font-size:13px; cursor:pointer; user-select:none; transition:transform .06s ease;
-    }
-    .chip[data-active="true"]{
-      background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 65%, transparent), color-mix(in oklab, var(--brand-2) 65%, transparent));
-      color:#061018; border-color:transparent;
-    }
-    .chip:active{ transform:scale(.98) }
-
-    main{ margin-top:16px }
-    .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
-
-    .card{
-      position:relative; display:flex; flex-direction:column; gap:12px;
-      border-radius:22px; padding:16px 16px 52px 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow); overflow:hidden; isolation:isolate;
-    }
-    .card:hover{ transform:translateY(-1px) }
-    .card:focus-within{ outline:2px solid var(--ring) }
-
-    .card-header{ display:flex; align-items:center; gap:10px; }
-    .tag-dot{ width:10px; height:10px; border-radius:50%; background: radial-gradient(circle at 30% 30%, var(--brand), var(--brand-2)); box-shadow:0 0 0 3px color-mix(in lab, var(--brand) 20%, transparent); }
-    .card-title{ margin:0; font-size:15px; font-weight:700; letter-spacing:.2px; }
-    .card-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:-2px; }
-    .tag{ font-size:11px; padding:4px 8px; border-radius:999px; background:color-mix(in lab, var(--brand) 14%, transparent); color:color-mix(in lab, var(--text-0) 85%, var(--brand)); border:1px dashed color-mix(in lab, var(--brand-2) 40%, transparent); }
-    .card-text{ white-space:pre-wrap; font-size:14px; color:var(--text-0); }
-
-    .card-actions{ position:absolute; right:10px; bottom:10px; display:flex; gap:8px; }
-    .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.16); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:8px 12px; border-radius:12px; cursor:pointer; user-select:none; color:var(--text-0); }
-    .btn:hover{ border-color: color-mix(in lab, var(--brand) 40%, transparent) }
-    .btn:active{ transform: translateY(1px) }
-    .btn svg{ width:18px; height:18px }
-
-    .copied{ position:absolute; left:12px; bottom:10px; font-size:12px; padding:6px 10px; border-radius:10px; background: color-mix(in lab, var(--ok) 20%, var(--bg-c)); color: color-mix(in lab, var(--text-0) 60%, var(--ok)); border: 1px solid color-mix(in lab, var(--ok) 35%, transparent); opacity:0; transform: translateY(6px); transition:all .18s ease; pointer-events:none; }
-    .copied[data-show="true"]{ opacity:1; transform:translateY(0) }
-
-    .footer{ margin-top:26px; color:var(--text-1); font-size:12px; text-align:center; }
-
-    @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
-  </style>
+  </script>
 </head>
-<body>
-<div class="shell">
-  <!-- Top search row -->
-  <div class="topsearch">
-    <div class="searchrow" role="region" aria-label="Search">
-      <div class="searchbox">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 0 0 1.57-4.23C15.99 6.01 13.48 3.5 10.49 3.5S5 6.01 5 9s2.51 5.5 5.5 5.5a6.47 6.47 0 0 0 4.23-1.57l.27.28v.79L20 20.49 21.49 19 15.5 14Zm-5 0C8.01 14 6 11.99 6 9.5S8.01 5 10.5 5 15 7.01 15 9.5 12.99 14 10.5 14Z"/></svg>
-        <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-        <button class="search-clear" id="clearSearch" title="Clear search" aria-label="Clear search">✕</button>
-      </div>
+<body class="light">
+  <header class="top appbar">
+    <div class="field prefix suffix round">
+      <span class="material-symbols-outlined" aria-hidden="true">search</span>
+      <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
+      <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
     </div>
-  </div>
-
+    <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+  </header>
+<main class="responsive padding">
   <header>
-    <div class="titlebar" aria-label="Site header">
-      <div class="logo" aria-hidden="true"></div>
-      <h1>Prompt Bubbles</h1>
+    <div id="headerContainer" aria-label="Site header">
+      <span id="headerIcon" class="material-symbols-outlined" aria-hidden="true">bubble_chart</span>
+      <h1 id="headerTitle">Prompt Bubbles</h1>
     </div>
-    <p class="subtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
-    <div class="chips" id="chipBar" aria-label="Tag filters"></div>
+    <p id="headerSubtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
+    <div id="chipBar" aria-label="Tag filters"></div>
   </header>
 
-  <main>
-    <section class="grid" id="grid" role="list" aria-label="Prompt cards"></section>
-    <p class="footer">Tip: Press <strong>/</strong> to jump to search • Press <strong>Enter</strong> on a focused card to copy</p>
-  </main>
-</div>
+  <section class="grid large" id="grid" role="list" aria-label="Prompt cards"></section>
+  <footer class="center" id="footerContainer"></footer>
+</main>
 
+<script type="module" src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@latest/dist/cdn/material-dynamic-colors.min.js"></script>
 <script>
-  // ====== DATA (keep yours or merge) ======
+  const HEADER_CONTAINER_ID = "headerContainer";
+  const HEADER_ICON_ID = "headerIcon";
+  const HEADER_TITLE_ID = "headerTitle";
+  const HEADER_SUBTITLE_ID = "headerSubtitle";
+  const FOOTER_CONTAINER_ID = "footerContainer";
+
+  const ROW_CLASS = "row";
+  const MIDDLE_CLASS = "middle";
+  const ICON_CLASS = "icon";
+  const HEADLINE_CLASS = "headline";
+  const SUBTITLE_CLASS = "subtitle";
+  const CENTER_CLASS = "center";
+  const TEXT_CLASS = "text";
+  const SECONDARY_CLASS = "secondary";
+  const SPAN_ALL_COLUMNS_CLASS = "s12";
+
+  const ICON_NAME = "bubble_chart";
+  const FOOTER_MESSAGE = "Tip: Press / to jump to search • Press Enter on a focused card to copy";
+
+  /** initializeLayout applies standard Beer.css classes and text content. */
+  function initializeLayout() {
+    const headerContainer = document.getElementById(HEADER_CONTAINER_ID);
+    headerContainer.classList.add(ROW_CLASS, MIDDLE_CLASS);
+
+    const headerIcon = document.getElementById(HEADER_ICON_ID);
+    headerIcon.classList.add(ICON_CLASS);
+    headerIcon.textContent = ICON_NAME;
+
+    document.getElementById(HEADER_TITLE_ID).classList.add(HEADLINE_CLASS);
+    document.getElementById(HEADER_SUBTITLE_ID).classList.add(SUBTITLE_CLASS);
+
+    const footerContainer = document.getElementById(FOOTER_CONTAINER_ID);
+    footerContainer.classList.add(CENTER_CLASS);
+    footerContainer.textContent = FOOTER_MESSAGE;
+  }
+
   const PROMPTS = [
     { id: "p01", title: "Ultra‑tight Bug Report Summarizer", text: `You are a senior SRE. Summarize the following bug/incident:
 - Extract root cause in one sentence.
@@ -564,98 +490,301 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   ];
 
 
-
-  // ====== STATE ======
-  const state = { search:"", tag:"all" };
-
-  // ====== HELPERS ======
-  const $ = (s, r=document)=>r.querySelector(s);
-  const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
-  const debounce=(fn,ms=120)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
-  const sanitize=(s)=>s.replace(/\r/g,'');
-  const matches=(item,q,tag)=>{
-    const tagOk = tag==="all" || item.tags.includes(tag);
-    if(!q) return tagOk;
-    const hay=(item.title+" "+item.text+" "+item.tags.join(" ")).toLowerCase();
-    return tagOk && q.split(/\s+/).every(tok=>hay.includes(tok));
+  const TAG_ALL = "all";
+  const state = { search: "", tag: TAG_ALL };
+  const STORAGE_KEY_PROMPT_STATE = "prompt-bubbles-state";
+  const CLASS_CARD = "card";
+  const CLASS_CONTENT = "content";
+  const CLASS_ACTIONS = "actions";
+  const CLASS_BUTTON = "button";
+  const CLASS_CHIPS = "chips";
+  const CLASS_CHIP = "chip";
+  /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
+  const SNACKBAR_CLASS_NAME = "snackbar";
+  const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
+  const COPY_BUTTON_LABEL = "Copy";
+  /** COPY_SNACKBAR_MESSAGE is the text shown after a prompt is copied. */
+  const COPY_SNACKBAR_MESSAGE = "Copied \u2713";
+  /** HTML tag names used to construct prompt cards. */
+  const TAG_ARTICLE = "article";
+  const TAG_DIV = "div";
+  const TAG_H3 = "h3";
+  const TAG_PRE = "pre";
+  const TAG_NAV = "nav";
+  const TAG_BUTTON = "button";
+  /** Attribute names and values for prompt card elements. */
+  const ATTRIBUTE_ROLE = "role";
+  const ROLE_LIST_ITEM = "listitem";
+  const ATTRIBUTE_ARIA_LABEL = "aria-label";
+  const ATTRIBUTE_TYPE = "type";
+  const BUTTON_TYPE_BUTTON = "button";
+  const DATA_ACTIVE_ATTRIBUTE = "data-active";
+  const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
+  const EVENT_INPUT = "input";
+  const EVENT_CLICK = "click";
+  const EVENT_KEYDOWN = "keydown";
+  const EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded";
+  const KEY_ENTER = "Enter";
+  const KEY_SLASH = "/";
+  /**
+   * selectOne returns the first DOM element matching the selector.
+   * @param {string} selector CSS selector used to query the DOM.
+   * @param {ParentNode} [root=document] optional root element to scope the search.
+   * @returns {Element|null} first matching element or null.
+   */
+  const selectOne = (selector, root = document) => root.querySelector(selector);
+  /**
+   * selectAll returns all DOM elements matching the selector as an array.
+   * @param {string} selector CSS selector used to query the DOM.
+   * @param {ParentNode} [root=document] optional root element to scope the search.
+   * @returns {Element[]} array of matching elements.
+   */
+  const selectAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  /**
+   * debounce delays invoking the provided function until after a wait period.
+   * @param {Function} targetFunction function to debounce.
+   * @param {number} [delayMilliseconds=120] delay duration in milliseconds.
+   * @returns {Function} debounced wrapper function.
+   */
+  const debounce = (targetFunction, delayMilliseconds = 120) => {
+    let timeoutIdentifier;
+    return (...functionArguments) => {
+      clearTimeout(timeoutIdentifier);
+      timeoutIdentifier = setTimeout(() => targetFunction(...functionArguments), delayMilliseconds);
+    };
   };
-
-  // ====== RENDERING ======
+  const CARRIAGE_RETURN_PATTERN = /\r/g;
+  const EMPTY_STRING = "";
+  /** sanitize removes carriage return characters from text. */
+  const sanitize = (inputText) => inputText.replace(CARRIAGE_RETURN_PATTERN, EMPTY_STRING);
+  /**
+   * matches determines if a prompt satisfies the search query and selected tag.
+   * @param {Object} promptItem prompt to evaluate.
+   * @param {string} query search string in lowercase.
+   * @param {string} tagName chosen tag filter.
+   * @returns {boolean} true when the prompt matches both filters.
+   */
+  const matches = (promptItem, query, tagName) => {
+    const tagIsAllowed = tagName === TAG_ALL || promptItem.tags.includes(tagName);
+    if (!query) return tagIsAllowed;
+    const combinedText = (promptItem.title + " " + promptItem.text + " " + promptItem.tags.join(" ")).toLowerCase();
+    return tagIsAllowed && query.split(/\s+/).every(searchToken => combinedText.includes(searchToken));
+  };
+  /**
+   * uniqueTags gathers all distinct tags from the prompts list.
+   * @returns {string[]} array beginning with the all tag followed by sorted tags.
+   */
   function uniqueTags(){
-    const t=new Set(); PROMPTS.forEach(p=>p.tags.forEach(tag=>t.add(tag)));
-    return ["all",...Array.from(t).sort((a,b)=>a.localeCompare(b))];
+    const tagSet = new Set();
+    PROMPTS.forEach(promptItem => promptItem.tags.forEach(tagName => tagSet.add(tagName)));
+    return [TAG_ALL, ...Array.from(tagSet).sort((tagA, tagB) => tagA.localeCompare(tagB))];
   }
-  function renderChips(){
-    const bar=$("#chipBar"); bar.innerHTML="";
-    uniqueTags().forEach(tag=>{
-      const chip=document.createElement("button");
-      chip.className="chip"; chip.type="button"; chip.textContent=tag;
-      chip.setAttribute("data-active", tag===state.tag ? "true":"false");
-      chip.onclick=()=>{ state.tag=tag; persist(); renderGrid(); highlightActiveChip(); };
-      bar.appendChild(chip);
+  /** renderChips populates the tag filter bar with chip buttons. */
+  function renderChips() {
+    const chipBarElement = selectOne("#chipBar");
+    chipBarElement.innerHTML = "";
+    const chipContainerElement = document.createElement("div");
+    chipContainerElement.className = CLASS_CHIPS;
+    uniqueTags().forEach(tagName => {
+      const chipButtonElement = document.createElement("button");
+      chipButtonElement.className = CLASS_CHIP;
+      chipButtonElement.type = "button";
+      chipButtonElement.textContent = tagName;
+      chipButtonElement.setAttribute(DATA_ACTIVE_ATTRIBUTE, tagName === state.tag ? "true" : "false");
+      chipButtonElement.onclick = () => { state.tag = tagName; persistState(); renderGrid(); highlightActiveChip(); };
+      chipContainerElement.appendChild(chipButtonElement);
+    });
+    chipBarElement.appendChild(chipContainerElement);
+  }
+  /**
+   * highlightActiveChip updates the visual state of the selected tag chip.
+   * @returns {void}
+   */
+  function highlightActiveChip() {
+    selectAll(`#chipBar .${CLASS_CHIP}`).forEach(chipElement =>
+      chipElement.setAttribute(DATA_ACTIVE_ATTRIBUTE, String(chipElement.textContent === state.tag))
+    );
+  }
+
+  /**
+   * renderGrid displays cards that match the current search and tag filters.
+   * @returns {void}
+   */
+  function renderGrid() {
+    const gridElement = selectOne("#grid");
+    const query = state.search.trim().toLowerCase();
+    const matchingPrompts = PROMPTS.filter(promptItem => matches(promptItem, query, state.tag));
+    gridElement.innerHTML = "";
+    matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
+    if (matchingPrompts.length === 0) {
+      const messageParagraphElement = document.createElement("p");
+      messageParagraphElement.classList.add(
+        TEXT_CLASS,
+        SECONDARY_CLASS,
+        CENTER_CLASS,
+        SPAN_ALL_COLUMNS_CLASS
+      );
+      messageParagraphElement.textContent = NO_MATCH_MESSAGE;
+      gridElement.appendChild(messageParagraphElement);
+    }
+  }
+
+    /** createCard builds a card element for a prompt. */
+    function createCard(promptItem) {
+      const cardElement = document.createElement(TAG_ARTICLE);
+      cardElement.className = CLASS_CARD;
+      cardElement.setAttribute(ATTRIBUTE_ROLE, ROLE_LIST_ITEM);
+      cardElement.tabIndex = 0;
+
+      const contentElement = document.createElement(TAG_DIV);
+      contentElement.className = CLASS_CONTENT;
+
+      const titleHeadingElement = document.createElement(TAG_H3);
+      titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
+      contentElement.appendChild(titleHeadingElement);
+
+      const chipContainerElement = document.createElement(TAG_DIV);
+      chipContainerElement.className = CLASS_CHIPS;
+      promptItem.tags.forEach(tagName => {
+        const chipElement = document.createElement(TAG_DIV);
+        chipElement.className = CLASS_CHIP;
+        chipElement.textContent = tagName;
+        chipContainerElement.appendChild(chipElement);
+      });
+      contentElement.appendChild(chipContainerElement);
+
+      const textElement = document.createElement(TAG_PRE);
+      textElement.textContent = promptItem.text;
+      contentElement.appendChild(textElement);
+
+      cardElement.appendChild(contentElement);
+
+      const actionsElement = document.createElement(TAG_NAV);
+      actionsElement.className = CLASS_ACTIONS;
+
+      const copyButtonElement = document.createElement(TAG_BUTTON);
+      copyButtonElement.className = CLASS_BUTTON;
+      copyButtonElement.type = BUTTON_TYPE_BUTTON;
+      const copyLabel = `${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`;
+      copyButtonElement.setAttribute(ATTRIBUTE_ARIA_LABEL, copyLabel);
+      copyButtonElement.innerHTML = copyIcon() + `<span>${COPY_BUTTON_LABEL}</span>`;
+      copyButtonElement.onclick = () => copyPrompt(promptItem, cardElement);
+      actionsElement.appendChild(copyButtonElement);
+
+      cardElement.appendChild(actionsElement);
+
+      const snackbarElement = document.createElement(TAG_DIV);
+      snackbarElement.className = SNACKBAR_CLASS_NAME;
+      snackbarElement.textContent = COPY_SNACKBAR_MESSAGE;
+      cardElement.appendChild(snackbarElement);
+
+      cardElement.addEventListener(EVENT_KEYDOWN, event => {
+        if (event.key === KEY_ENTER) {
+          event.preventDefault();
+          copyPrompt(promptItem, cardElement);
+        }
+      });
+      return cardElement;
+    }
+
+  /**
+   * copyPrompt writes a prompt's text to the clipboard and shows a snackbar message.
+   * @param {Object} promptItem prompt data to copy.
+   * @param {HTMLElement} cardElement associated card element.
+   * @returns {void}
+   */
+  function copyPrompt(promptItem, cardElement) {
+    const content = `${promptItem.text}`.trim();
+    navigator.clipboard.writeText(sanitize(content)).then(() => {
+      const snackbarElement = selectOne(`.${SNACKBAR_CLASS_NAME}`, cardElement);
+      ui(SNACKBAR_CLASS_NAME, snackbarElement);
+    }).catch(() => {
+      const textareaElement = document.createElement("textarea");
+      textareaElement.value = content;
+      textareaElement.style.position = "fixed";
+      textareaElement.style.left = "-9999px";
+      document.body.appendChild(textareaElement);
+      textareaElement.select();
+      document.execCommand("copy");
+      textareaElement.remove();
     });
   }
-  function highlightActiveChip(){ $$("#chipBar .chip").forEach(c=>c.setAttribute("data-active", String(c.textContent===state.tag))); }
-
-  function renderGrid(){
-    const grid=$("#grid"); const q=state.search.trim().toLowerCase();
-    const items=PROMPTS.filter(p=>matches(p,q,state.tag));
-    grid.innerHTML="";
-    items.forEach(item=>grid.appendChild(createCard(item)));
-    if(items.length===0){ const p=document.createElement("p"); p.style.color="var(--text-1)"; p.style.gridColumn="1/-1"; p.textContent="No prompts match your search/filter."; grid.appendChild(p); }
-  }
-
-  function createCard(item){
-    const card=document.createElement("article"); card.className="card"; card.setAttribute("role","listitem"); card.tabIndex=0;
-
-    const header=document.createElement("div"); header.className="card-header";
-    header.innerHTML=`<span class="tag-dot" aria-hidden="true"></span><h3 class="card-title">${escapeHTML(item.title)}</h3>`;
-    card.appendChild(header);
-
-    const tags=document.createElement("div"); tags.className="card-tags";
-    item.tags.forEach(t=>{ const el=document.createElement("span"); el.className="tag"; el.textContent=t; tags.appendChild(el); });
-    card.appendChild(tags);
-
-    const text=document.createElement("pre"); text.className="card-text"; text.textContent=item.text; card.appendChild(text);
-
-    const actions=document.createElement("div"); actions.className="card-actions";
-    const btn=document.createElement("button"); btn.className="btn"; btn.type="button"; btn.setAttribute("aria-label",`Copy prompt: ${item.title}`);
-    btn.innerHTML=copyIcon()+`<span>Copy</span>`; btn.onclick=()=>copyPrompt(item,card);
-    actions.appendChild(btn); card.appendChild(actions);
-
-    const toast=document.createElement("div"); toast.className="copied"; toast.textContent="Copied ✓"; card.appendChild(toast);
-
-    card.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); copyPrompt(item,card); }});
-    return card;
-  }
-
-  function copyPrompt(item,card){
-    const content=`${item.text}`.trim();
-    navigator.clipboard.writeText(sanitize(content)).then(()=>{
-      const toast=$(".copied",card); toast.setAttribute("data-show","true"); setTimeout(()=>toast.setAttribute("data-show","false"),1200);
-    }).catch(()=>{
-      const ta=document.createElement("textarea"); ta.value=content; ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta);
-      ta.select(); document.execCommand("copy"); ta.remove();
-    });
-  }
+  /**
+   * copyIcon generates SVG markup for the copy button.
+   * @returns {string} SVG markup string.
+   */
   function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
-  function escapeHTML(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  const HTML_ESCAPE_PATTERN = /[&<>"']/g;
+  const HTML_ESCAPE_REPLACEMENTS = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  };
+  /** escapeHTML converts reserved HTML characters to escape sequences. */
+  function escapeHTML(rawText){ return rawText.replace(HTML_ESCAPE_PATTERN, character => HTML_ESCAPE_REPLACEMENTS[character]); }
 
-  // ====== SEARCH + PERSIST ======
-  const onSearch = debounce((v)=>{ state.search=v; persist(); renderGrid(); },80);
-  function persist(){ try{ localStorage.setItem("prompt-bubbles-state", JSON.stringify(state)); }catch{} }
-  function restore(){ try{ const raw=localStorage.getItem("prompt-bubbles-state"); if(raw){ const p=JSON.parse(raw); if(typeof p.search==="string") state.search=p.search; if(typeof p.tag==="string") state.tag=p.tag; } }catch{} }
-
-  // ====== INIT ======
-  function init(){
-    restore(); renderChips(); renderGrid();
-    const input=$("#searchInput"), clear=$("#clearSearch");
-    input.value=state.search;
-    input.addEventListener("input",(e)=>onSearch(e.target.value));
-    clear.addEventListener("click",()=>{ input.value=""; input.focus(); onSearch(""); });
-    window.addEventListener("keydown",(e)=>{ if(e.key==="/" && document.activeElement!==input){ e.preventDefault(); input.focus(); input.select(); }});
+  /**
+   * onSearch updates the search text and re-renders the prompt grid.
+   * @param {string} searchValue value from the search input field.
+   * @returns {void}
+   */
+  const onSearch = debounce(searchValue => { state.search = searchValue; persistState(); renderGrid(); }, 80);
+  /**
+   * persistState saves the current search and tag state in localStorage.
+   */
+  function persistState() {
+    try {
+      localStorage.setItem(STORAGE_KEY_PROMPT_STATE, JSON.stringify(state));
+    } catch {}
   }
-  document.addEventListener("DOMContentLoaded", init);
+  /**
+   * restoreState loads persisted search and tag state from localStorage.
+   */
+  function restoreState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_PROMPT_STATE);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed.search === "string") state.search = parsed.search;
+        if (typeof parsed.tag === "string") state.tag = parsed.tag;
+      }
+    } catch {}
+  }
+
+  /** toggleTheme switches between light and dark themes. */
+  function toggleTheme() {
+    const currentTheme = document.body.classList.contains(DARK_THEME) ? DARK_THEME : LIGHT_THEME;
+    const nextTheme = currentTheme === DARK_THEME ? LIGHT_THEME : DARK_THEME;
+    document.body.classList.remove(LIGHT_THEME, DARK_THEME);
+    document.body.classList.add(nextTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  }
+
+  /** init prepares interactive elements. */
+  function init() {
+    initializeTheme();
+    initializeLayout();
+    restoreState();
+    renderChips();
+    renderGrid();
+    const inputElement = selectOne("#searchInput"),
+          clearButton = selectOne("#clearSearch"),
+          themeButton = selectOne("#themeToggle");
+    inputElement.value = state.search;
+    inputElement.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
+    clearButton.addEventListener(EVENT_CLICK, () => { inputElement.value = ""; inputElement.focus(); onSearch(""); });
+    themeButton.addEventListener(EVENT_CLICK, toggleTheme);
+    window.addEventListener(EVENT_KEYDOWN, event => {
+      if (event.key === KEY_SLASH && document.activeElement !== inputElement) {
+        event.preventDefault();
+        inputElement.focus();
+        inputElement.select();
+      }
+    });
+  }
+  document.addEventListener(EVENT_DOM_CONTENT_LOADED, init);
 </script>
 </body>
 </html>
