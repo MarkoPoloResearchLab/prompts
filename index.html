@@ -13,14 +13,14 @@
     /** initializeTheme applies a persisted theme preference. */
     function initializeTheme() {
       const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-      const theme = savedTheme === DARK_THEME ? DARK_THEME : LIGHT_THEME;
-      document.documentElement.setAttribute("data-theme", theme);
+      const selectedTheme = savedTheme === DARK_THEME ? DARK_THEME : LIGHT_THEME;
+      document.body.classList.remove(LIGHT_THEME, DARK_THEME);
+      document.body.classList.add(selectedTheme);
     }
-    initializeTheme();
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beercss.min.js"></script>
 </head>
-<body>
+<body class="light">
 <div class="container">
   <div class="search" role="region" aria-label="Search">
     <div class="field prefix suffix">
@@ -588,13 +588,16 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
 
   /** toggleTheme switches between light and dark themes. */
   function toggleTheme() {
-    const nextTheme = document.documentElement.getAttribute("data-theme") === DARK_THEME ? LIGHT_THEME : DARK_THEME;
-    document.documentElement.setAttribute("data-theme", nextTheme);
+    const currentTheme = document.body.classList.contains(DARK_THEME) ? DARK_THEME : LIGHT_THEME;
+    const nextTheme = currentTheme === DARK_THEME ? LIGHT_THEME : DARK_THEME;
+    document.body.classList.remove(LIGHT_THEME, DARK_THEME);
+    document.body.classList.add(nextTheme);
     localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
   }
 
   /** init prepares interactive elements. */
   function init() {
+    initializeTheme();
     restoreState();
     renderChips();
     renderGrid();
