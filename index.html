@@ -111,6 +111,8 @@
     .card-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:-2px; }
     .tag{ font-size:11px; padding:4px 8px; border-radius:999px; background:color-mix(in lab, var(--brand) 14%, transparent); color:color-mix(in lab, var(--text-0) 85%, var(--brand)); border:1px dashed color-mix(in lab, var(--brand-2) 40%, transparent); cursor:pointer; user-select:none; }
     .card-text{ white-space:pre-wrap; font-size:14px; color:var(--text-0); }
+    .placeholder-input{ display:inline-block; padding:0 2px; border:0; border-bottom:1px dashed var(--brand); background:transparent; color:var(--brand); font:inherit; }
+    .placeholder-input:focus{ outline:none; border-bottom-color:var(--ring); }
 
     .card-actions{ position:absolute; right:10px; bottom:10px; display:flex; gap:8px; }
     .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.16); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:8px 12px; border-radius:12px; cursor:pointer; user-select:none; color:var(--text-0); }
@@ -571,6 +573,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLICK_EVENT = "click";
   const TAG_CLASS = "tag";
   const SPAN_ELEMENT = "span";
+  /** placeholder constants for text inputs */
+  const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
+  const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
+  const PLACEHOLDER_CLASS = "placeholder-input";
+  const INPUT_ELEMENT = "input";
+  const PLACEHOLDER_SELECTOR = INPUT_ELEMENT+"["+PLACEHOLDER_ATTRIBUTE+"]";
 
   // ====== HELPERS ======
   const $ = (s, r=document)=>r.querySelector(s);
@@ -583,6 +591,39 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     const hay=(item.title+" "+item.text+" "+item.tags.join(" ")).toLowerCase();
     return tagOk && q.split(/\s+/).every(tok=>hay.includes(tok));
   };
+
+  /** renderPromptContent builds DOM nodes for prompt text and placeholders */
+  function renderPromptContent(rawText){
+    PLACEHOLDER_PATTERN.lastIndex=0;
+    const fragment=document.createDocumentFragment();
+    let cursorIndex=0; let matchResult;
+    while((matchResult=PLACEHOLDER_PATTERN.exec(rawText))!==null){
+      const precedingSegment=rawText.slice(cursorIndex, matchResult.index);
+      if(precedingSegment) fragment.appendChild(document.createTextNode(precedingSegment));
+      const placeholderName=matchResult[1];
+      const placeholderInput=document.createElement(INPUT_ELEMENT);
+      placeholderInput.className=PLACEHOLDER_CLASS;
+      placeholderInput.setAttribute(PLACEHOLDER_ATTRIBUTE, placeholderName);
+      placeholderInput.placeholder=placeholderName;
+      placeholderInput.style.width=`${placeholderName.length}ch`;
+      fragment.appendChild(placeholderInput);
+      cursorIndex=PLACEHOLDER_PATTERN.lastIndex;
+    }
+    const trailingSegment=rawText.slice(cursorIndex);
+    if(trailingSegment) fragment.appendChild(document.createTextNode(trailingSegment));
+    return fragment;
+  }
+
+  /** resolvePlaceholders creates the final text for copying */
+  function resolvePlaceholders(textElement){
+    const clone=textElement.cloneNode(true);
+    $$(PLACEHOLDER_SELECTOR, clone).forEach(inputElement=>{
+      const placeholderName=inputElement.getAttribute(PLACEHOLDER_ATTRIBUTE);
+      const userValue=inputElement.value || placeholderName;
+      inputElement.replaceWith(userValue);
+    });
+    return clone.textContent;
+  }
 
   // ====== RENDERING ======
   function uniqueTags(){
@@ -636,26 +677,37 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     });
     card.appendChild(tags);
 
-    const text=document.createElement("pre"); text.className="card-text"; text.textContent=item.text; card.appendChild(text);
+    const text=document.createElement("pre");
+    text.className="card-text";
+    text.appendChild(renderPromptContent(item.text));
+    card.appendChild(text);
 
     const actions=document.createElement("div"); actions.className="card-actions";
     const btn=document.createElement("button"); btn.className="btn"; btn.type="button"; btn.setAttribute("aria-label",`Copy prompt: ${item.title}`);
-    btn.innerHTML=copyIcon()+`<span>Copy</span>`; btn.onclick=()=>copyPrompt(item,card);
+    btn.innerHTML=copyIcon()+`<span>Copy</span>`; btn.onclick=()=>copyPrompt(card);
     actions.appendChild(btn); card.appendChild(actions);
 
     const toast=document.createElement("div"); toast.className="copied"; toast.textContent="Copied ✓"; card.appendChild(toast);
 
-    card.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); copyPrompt(item,card); }});
+    card.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); copyPrompt(card); }});
     return card;
   }
 
-  function copyPrompt(item,card){
-    const content=`${item.text}`.trim();
+  /** copyPrompt writes the card text with filled placeholders to the clipboard */
+  function copyPrompt(card){
+    const textElement=$(".card-text",card);
+    const content=resolvePlaceholders(textElement).trim();
     navigator.clipboard.writeText(sanitize(content)).then(()=>{
       const toast=$(".copied",card); toast.setAttribute("data-show","true"); setTimeout(()=>toast.setAttribute("data-show","false"),1200);
     }).catch(()=>{
-      const ta=document.createElement("textarea"); ta.value=content; ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta);
-      ta.select(); document.execCommand("copy"); ta.remove();
+      const fallback=document.createElement("textarea");
+      fallback.value=content;
+      fallback.style.position="fixed";
+      fallback.style.left="-9999px";
+      document.body.appendChild(fallback);
+      fallback.select();
+      document.execCommand("copy");
+      fallback.remove();
     });
   }
   function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
