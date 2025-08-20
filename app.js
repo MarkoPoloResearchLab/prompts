@@ -34,6 +34,10 @@ const CLASS_ROW_END = "row end";
 const SNACKBAR_CLASS_NAME = "snackbar";
 const COPY_SNACKBAR_ID = "copySnackbar";
 const COPY_BUTTON_LABEL = "Copy";
+const COPY_SUCCESS_SNACKBAR_MESSAGE = "Copied ✓";
+const COPY_INDICATOR_TEXT = "Copied";
+const COPY_INDICATOR_ICON_NAME = "check";
+const COPY_INDICATOR_DURATION_MS = 2000;
 
 const TAG_ALL = "all";
 const state = {search: "", tag: TAG_ALL};
@@ -172,42 +176,64 @@ function createCard(p) {
     card.appendChild(content);
 
     const actions = document.createElement("nav");
-    actions.className = `${CLASS_ACTIONS} ${CLASS_ROW_END}`;
+    actions.className = CLASS_ACTIONS;
+
+    const copyIndicator = document.createElement("span");
+    copyIndicator.className = `${TEXT_CLASS} success small row middle`;
+    copyIndicator.innerHTML = `<i aria-hidden="true" class="material-symbols-outlined icon">${COPY_INDICATOR_ICON_NAME}</i><span>${COPY_INDICATOR_TEXT}</span>`;
+    copyIndicator.hidden = true;
+    actions.appendChild(copyIndicator);
+
+    const spacer = document.createElement("div");
+    spacer.className = CLASS_GROW;
+    actions.appendChild(spacer);
 
     const copyBtn = document.createElement("button");
     copyBtn.className = CLASS_BUTTON;
     copyBtn.type = "button";
     copyBtn.setAttribute("aria-label", `Copy prompt: ${p.title}`);
     copyBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span>${COPY_BUTTON_LABEL}</span>`;
-    copyBtn.onclick = () => copyPrompt(p);
+    copyBtn.onclick = () => copyPrompt(p, copyIndicator);
     actions.appendChild(copyBtn);
 
     card.appendChild(actions);
 
-    card.addEventListener(EVENT_KEYDOWN, e => {
-        if (e.key === KEY_ENTER) {
-            e.preventDefault();
-            copyPrompt(p);
+    card.addEventListener(EVENT_KEYDOWN, event => {
+        if (event.key === KEY_ENTER) {
+            event.preventDefault();
+            copyPrompt(p, copyIndicator);
         }
     });
     return card;
 }
 
-function copyPrompt(p) {
-    const content = `${p.text}`.trim();
+/**
+ * copyPrompt writes the prompt text to the clipboard and displays feedback.
+ */
+function copyPrompt(promptItem, indicatorElement) {
+    const content = `${promptItem.text}`.trim();
+
+    function revealIndicator() {
+        if (!indicatorElement) return;
+        indicatorElement.hidden = false;
+        setTimeout(() => { indicatorElement.hidden = true; }, COPY_INDICATOR_DURATION_MS);
+    }
+
     navigator.clipboard.writeText(sanitize(content)).then(() => {
-        const s = selectOne(`#${COPY_SNACKBAR_ID}`);
-        s.textContent = "Copied ✓";
-        ui(SNACKBAR_CLASS_NAME, s); // Beer snackbar trigger
+        const snackbarElement = selectOne(`#${COPY_SNACKBAR_ID}`);
+        snackbarElement.textContent = COPY_SUCCESS_SNACKBAR_MESSAGE;
+        ui(SNACKBAR_CLASS_NAME, snackbarElement);
+        revealIndicator();
     }).catch(() => {
-        const ta = document.createElement("textarea");
-        ta.value = content;
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
+        const textareaElement = document.createElement("textarea");
+        textareaElement.value = content;
+        textareaElement.style.position = "fixed";
+        textareaElement.style.left = "-9999px";
+        document.body.appendChild(textareaElement);
+        textareaElement.select();
         document.execCommand("copy");
-        ta.remove();
+        textareaElement.remove();
+        revealIndicator();
     });
 }
 
