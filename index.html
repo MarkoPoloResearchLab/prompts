@@ -7,6 +7,9 @@
   <meta name="color-scheme" content="dark light" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.css" />
+  <style>
+    .card-header { min-height: 7rem; }
+  </style>
   <script>
     const THEME_STORAGE_KEY = "preferred-theme";
     const LIGHT_THEME = "light";
@@ -23,10 +26,10 @@
 <body class="light">
   <header class="top appbar">
     <nav>
-      <div class="field prefix suffix round">
-        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+      <div class="field prefix suffix round grow">
+        <span class="material-symbols-outlined icon prefix" aria-hidden="true">search</span>
         <input id="searchInput" type="search" placeholder="Search prompts (title, text, tags)..." autocomplete="off" aria-label="Search prompts" />
-        <button class="icon" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
+        <button class="icon suffix" id="clearSearch" title="Clear search" aria-label="Clear search"><span class="material-symbols-outlined">close</span></button>
       </div>
       <button class="circle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
     </nav>
@@ -75,7 +78,7 @@
   /** initializeLayout applies standard Beer.css classes and text content. */
   function initializeLayout() {
     const headerContainer = document.getElementById(HEADER_CONTAINER_ID);
-    headerContainer.classList.add(ROW_CLASS, MIDDLE_CLASS);
+    headerContainer.classList.add(ROW_CLASS, MIDDLE_CLASS, CENTER_CLASS);
 
     const headerIcon = document.getElementById(HEADER_ICON_ID);
     headerIcon.classList.add(ICON_CLASS);
@@ -510,10 +513,14 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const CLASS_CHIP = "chip";
   /** END_ALIGNMENT_CLASS aligns elements to the end of a flex container. */
   const END_ALIGNMENT_CLASS = "end";
+  /** CARD_HEADER_CLASS groups a card's title and tags. */
+  const CARD_HEADER_CLASS = "card-header";
   /** GROW_CLASS expands a flex child to fill available vertical space. */
   const GROW_CLASS = "grow";
   /** COLUMN_STRETCH_CLASS configures a column layout that stretches children to equal heights. */
   const COLUMN_STRETCH_CLASS = "column stretch";
+  /** CARD_HEADER_CLASS reserves consistent vertical space for card titles. */
+  const CARD_HEADER_CLASS = "min-h-48";
   /** SNACKBAR_CLASS_NAME is the class and component name for Beer.css snackbars. */
   const SNACKBAR_CLASS_NAME = "snackbar";
   /** COPY_SNACKBAR_ID identifies the global snackbar element for copy confirmations. */
@@ -659,9 +666,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       contentElement.className = CLASS_CONTENT;
       contentElement.classList.add(GROW_CLASS);
 
+      const headerWrapperElement = document.createElement(TAG_DIV);
+      headerWrapperElement.className = CARD_HEADER_CLASS;
+
       const titleHeadingElement = document.createElement(TAG_H3);
       titleHeadingElement.innerHTML = escapeHTML(promptItem.title);
-      contentElement.appendChild(titleHeadingElement);
+      headerWrapperElement.appendChild(titleHeadingElement);
 
       const chipContainerElement = document.createElement(TAG_DIV);
       chipContainerElement.className = CLASS_CHIPS;
@@ -671,10 +681,11 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
         chipElement.textContent = tagName;
         chipContainerElement.appendChild(chipElement);
       });
-      contentElement.appendChild(chipContainerElement);
+      headerWrapperElement.appendChild(chipContainerElement);
+      contentElement.appendChild(headerWrapperElement);
 
       const textWrapperElement = document.createElement(TAG_DIV);
-      textWrapperElement.className = GROW_CLASS;
+      textWrapperElement.classList.add(GROW_CLASS);
       const textElement = document.createElement(TAG_PRE);
       textElement.className = TEXT_CLASS;
       textElement.textContent = promptItem.text;
@@ -805,7 +816,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
       }
     });
   }
-  document.addEventListener(EVENT_DOM_CONTENT_LOADED, init);
+  /** onContentLoaded initializes components then reapplies Beer.css styling. */
+  function onContentLoaded() {
+    init();
+    ui();
+  }
+  document.addEventListener(EVENT_DOM_CONTENT_LOADED, onContentLoaded);
 </script>
 </body>
 </html>
