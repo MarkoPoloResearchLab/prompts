@@ -32,21 +32,54 @@
   </nav>
 
   <header>
-    <div class="titlebar" aria-label="Site header">
-      <div class="logo" aria-hidden="true"></div>
-      <h1>Prompt Bubbles</h1>
+    <div id="headerContainer" aria-label="Site header">
+      <i id="headerIcon" aria-hidden="true"></i>
+      <h1 id="headerTitle">Prompt Bubbles</h1>
     </div>
-    <p class="subtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
+    <p id="headerSubtitle">A visually stunning, zero-backend gallery of copy-ready prompts.</p>
     <div id="chipBar" aria-label="Tag filters"></div>
   </header>
 
   <section class="grid large" id="grid" role="list" aria-label="Prompt cards"></section>
-  <p class="footer">Tip: Press <strong>/</strong> to jump to search • Press <strong>Enter</strong> on a focused card to copy</p>
+  <footer class="center" id="footerContainer"></footer>
 </main>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@latest/dist/cdn/beer.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@latest/dist/cdn/material-dynamic-colors.min.js"></script>
 <script>
+  const HEADER_CONTAINER_ID = "headerContainer";
+  const HEADER_ICON_ID = "headerIcon";
+  const HEADER_TITLE_ID = "headerTitle";
+  const HEADER_SUBTITLE_ID = "headerSubtitle";
+  const FOOTER_CONTAINER_ID = "footerContainer";
+
+  const ROW_CLASS = "row";
+  const MIDDLE_CLASS = "middle";
+  const ICON_CLASS = "icon";
+  const HEADLINE_CLASS = "headline";
+  const SUBTITLE_CLASS = "subtitle";
+  const CENTER_CLASS = "center";
+
+  const ICON_NAME = "bubble_chart";
+  const FOOTER_MESSAGE = "Tip: Press / to jump to search • Press Enter on a focused card to copy";
+
+  /** initializeLayout applies standard Beer.css classes and text content. */
+  function initializeLayout() {
+    const headerContainer = document.getElementById(HEADER_CONTAINER_ID);
+    headerContainer.classList.add(ROW_CLASS, MIDDLE_CLASS);
+
+    const headerIcon = document.getElementById(HEADER_ICON_ID);
+    headerIcon.classList.add(ICON_CLASS);
+    headerIcon.textContent = ICON_NAME;
+
+    document.getElementById(HEADER_TITLE_ID).classList.add(HEADLINE_CLASS);
+    document.getElementById(HEADER_SUBTITLE_ID).classList.add(SUBTITLE_CLASS);
+
+    const footerContainer = document.getElementById(FOOTER_CONTAINER_ID);
+    footerContainer.classList.add(CENTER_CLASS);
+    footerContainer.textContent = FOOTER_MESSAGE;
+  }
+
   const PROMPTS = [
     { id: "p01", title: "Ultra‑tight Bug Report Summarizer", text: `You are a senior SRE. Summarize the following bug/incident:
 - Extract root cause in one sentence.
@@ -686,6 +719,7 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   /** init prepares interactive elements. */
   function init() {
     initializeTheme();
+    initializeLayout();
     restoreState();
     renderChips();
     renderGrid();
