@@ -59,6 +59,9 @@
   const HEADLINE_CLASS = "headline";
   const SUBTITLE_CLASS = "subtitle";
   const CENTER_CLASS = "center";
+  const TEXT_CLASS = "text";
+  const SECONDARY_CLASS = "secondary";
+  const SPAN_ALL_COLUMNS_CLASS = "s12";
 
   const ICON_NAME = "bubble_chart";
   const FOOTER_MESSAGE = "Tip: Press / to jump to search • Press Enter on a focused card to copy";
@@ -603,8 +606,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
     matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
     if (matchingPrompts.length === 0) {
       const messageParagraphElement = document.createElement("p");
-      messageParagraphElement.style.color = "var(--text-1)";
-      messageParagraphElement.style.gridColumn = "1/-1";
+      messageParagraphElement.classList.add(
+        TEXT_CLASS,
+        SECONDARY_CLASS,
+        CENTER_CLASS,
+        SPAN_ALL_COLUMNS_CLASS
+      );
       messageParagraphElement.textContent = NO_MATCH_MESSAGE;
       gridElement.appendChild(messageParagraphElement);
     }
