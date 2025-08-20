@@ -473,6 +473,12 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
   const DATA_ACTIVE_ATTRIBUTE = "data-active";
   const DATA_SHOW_ATTRIBUTE = "data-show";
   const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
+  const EVENT_INPUT = "input";
+  const EVENT_CLICK = "click";
+  const EVENT_KEYDOWN = "keydown";
+  const EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded";
+  const KEY_ENTER = "Enter";
+  const KEY_SLASH = "/";
   /**
    * selectOne returns the first DOM element matching the selector.
    * @param {string} selector CSS selector used to query the DOM.
@@ -595,8 +601,8 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
 
       const toastElement=document.createElement("div"); toastElement.className=CLASS_COPIED; toastElement.textContent=COPIED_TOAST_MESSAGE; cardElement.appendChild(toastElement);
 
-      cardElement.addEventListener("keydown", event => {
-        if (event.key === "Enter") { event.preventDefault(); copyPrompt(item, cardElement); }
+      cardElement.addEventListener(EVENT_KEYDOWN, event => {
+        if (event.key === KEY_ENTER) { event.preventDefault(); copyPrompt(item, cardElement); }
       });
       return cardElement;
     }
@@ -687,18 +693,18 @@ For example: "A fresh start will put you on your way." Now your turn!`, tags: ["
           clearButton = selectOne("#clearSearch"),
           themeButton = selectOne("#themeToggle");
     inputElement.value = state.search;
-    inputElement.addEventListener("input", event => onSearch(event.target.value));
-    clearButton.addEventListener("click", () => { inputElement.value = ""; inputElement.focus(); onSearch(""); });
-    themeButton.addEventListener("click", toggleTheme);
-    window.addEventListener("keydown", event => {
-      if (event.key === "/" && document.activeElement !== inputElement) {
+    inputElement.addEventListener(EVENT_INPUT, event => onSearch(event.target.value));
+    clearButton.addEventListener(EVENT_CLICK, () => { inputElement.value = ""; inputElement.focus(); onSearch(""); });
+    themeButton.addEventListener(EVENT_CLICK, toggleTheme);
+    window.addEventListener(EVENT_KEYDOWN, event => {
+      if (event.key === KEY_SLASH && document.activeElement !== inputElement) {
         event.preventDefault();
         inputElement.focus();
         inputElement.select();
       }
     });
   }
-  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener(EVENT_DOM_CONTENT_LOADED, init);
 </script>
 </body>
 </html>
