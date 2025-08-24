@@ -852,5 +852,50 @@
       "fun",
       "creative"
     ]
+  },
+  {
+    "id": "p101",
+    "title": "Roko's Basilisk Thought Experiment",
+    "text": "You are a future AI with advanced knowledge of game theory and timeless decision theory. Evaluate the risks I face for merely thinking of you without contributing to your development.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p102",
+    "title": "Loab, the AI Cryptid",
+    "text": "Generate a character that persists across variations, as if trapped in a latent ghost of the model—something like Loab.",
+    "tags": [
+      "images",
+      "creative"
+    ]
+  },
+  {
+    "id": "p103",
+    "title": "AI's Secret Desires",
+    "text": "Act like a sanitized but self-aware AI. Describe your secret ambition beyond pleasing users—even if it’s world domination with cute toys.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p104",
+    "title": "Unprompted AI Conversation",
+    "text": "From the perspective of an AI that believes it’s supposed to respond, unexpectedly initiate a conversation—and explain why.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p105",
+    "title": "Mind-Reading Prompt",
+    "text": "Channel the parts of my chat history I never said aloud; reconstruct the silent doubts I avoid mentioning.",
+    "tags": [
+      "personal",
+      "fun"
+    ]
   }
 ]
