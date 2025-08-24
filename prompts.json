@@ -1,0 +1,856 @@
+[
+  {
+    "id": "p01",
+    "title": "Ultra‑tight Bug Report Summarizer",
+    "text": "You are a senior SRE. Summarize the following bug/incident:\n- Extract root cause in one sentence.\n- List 3–5 high‑impact user symptoms.\n- Give a one‑paragraph timeline with precise timestamps.\n- Output a final, single remediation checklist with owners.",
+    "tags": [
+      "engineering",
+      "writing"
+    ]
+  },
+  {
+    "id": "p02",
+    "title": "Product Requirements Refiner",
+    "text": "Rewrite this PRD as a crisp, testable spec:\n- Replace vague language with measurable acceptance criteria.\n- Add explicit non‑goals.\n- Propose at most 2 KPIs and define success thresholds.",
+    "tags": [
+      "business",
+      "writing"
+    ]
+  },
+  {
+    "id": "p03",
+    "title": "Creative Writing: Character Engine",
+    "text": "Generate a character sheet:\n- Archetype + twist\n- 3 contradictions\n- Voice tics and taboo topics\n- A 2‑sentence backstory that implies a secret.",
+    "tags": [
+      "creative",
+      "writing"
+    ]
+  },
+  {
+    "id": "p04",
+    "title": "SQL Reviewer",
+    "text": "Given a SQL query:\n1) Explain what it does in plain English.\n2) Identify logical errors or edge cases.\n3) Suggest an optimized rewrite with indexes.",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "p05",
+    "title": "Image Prompt Polisher",
+    "text": "Transform this messy image prompt into a camera‑ready version:\n- Unambiguous subject, composition, lens, time of day\n- 3 stylistic constraints\n- 1 negative list of banned elements",
+    "tags": [
+      "images",
+      "creative"
+    ]
+  },
+  {
+    "id": "p06",
+    "title": "Interview: STAR Compressor",
+    "text": "Convert this experience into STAR format (Situation, Task, Action, Result) with quantifiable outcomes and a 2‑line takeaway.",
+    "tags": [
+      "career",
+      "writing"
+    ]
+  },
+  {
+    "id": "p07",
+    "title": "Docs to Cheat‑Sheet",
+    "text": "Reduce this long document into: 10 bullet cheat‑sheet, 5 pitfalls, 3 commands/snippets worth memorizing.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p08",
+    "title": "UX Copy (Microcopy)",
+    "text": "Write concise microcopy for this UI:\n- Primary button (max 2 words)\n- Empty‑state line (max 9 words)\n- Tooltip (max 14 words), with verb first.",
+    "tags": [
+      "business",
+      "writing"
+    ]
+  },
+  {
+    "id": "p09",
+    "title": "Teacher Mode",
+    "text": "Teach this concept to a curious 12‑year‑old:\n- Hook in 2 sentences\n- Analogy\n- One worked example\n- A 3‑question quiz with answers.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "p10",
+    "title": "Meeting → Decision Log",
+    "text": "Turn these notes into a decision log:\n- Final decision in one line\n- Options considered + why rejected\n- Owners and due dates",
+    "tags": [
+      "business",
+      "writing"
+    ]
+  },
+  {
+    "id": "p11",
+    "title": "Use What You Know: 90‑Day $400k Plan",
+    "text": "Using what you know about me, propose 3 product/business bets targeting ~$400k/yr income.\nFor each:\n- Core user, painful job‑to‑be‑done, unfair advantage from my background\n- Simple validation plan (next 2 weeks), success metric to continue\n- 90‑day roadmap (milestones, risks, kill criteria)",
+    "tags": [
+      "personal",
+      "business"
+    ]
+  },
+  {
+    "id": "p12",
+    "title": "Personal Day Architect",
+    "text": "Using what you know about me, design a weekday schedule that maximizes morning output and preserves evenings for family.\n- 3‑hour deep‑work block with focus ritual\n- Two break routines that don't derail momentum\n- Family time plan + one micro‑win to close the day",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p13",
+    "title": "Kind Roast → Action Plan",
+    "text": "Using what you know about me, write a 6‑line gentle roast highlighting my predictable pitfalls.\nThen convert it into a 5‑step action plan with measurable weekly targets.",
+    "tags": [
+      "personal",
+      "fun"
+    ]
+  },
+  {
+    "id": "p14",
+    "title": "Venture Skeptic Roleplay",
+    "text": "Roleplay as a brutally honest VC. Using what you know about me, interrogate one idea of mine:\n- 6 hard questions\n- 3 fatal risks and how to test cheaply\n- Funding memo (no fluff) with go/no‑go today",
+    "tags": [
+      "personal",
+      "business"
+    ]
+  },
+  {
+    "id": "p15",
+    "title": "Beatbox Anthem for GPT‑5",
+    "text": "Compose 16 bars of onomatopoeic beatbox + rap celebrating GPT‑5.\nConstraints:\n- Use lines with sounds like \"tks tks pff k‑tch bmm\"\n- Include a punchy chorus about reasoning\n- End with a one‑line dedication",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p16",
+    "title": "Emoji‑First, Words‑Second",
+    "text": "Respond in emojis only for the first pass (max 10 emojis).\nThen provide a plain‑English translation and a 3‑bullet action list.",
+    "tags": [
+      "fun"
+    ]
+  },
+  {
+    "id": "p17",
+    "title": "ASCII Loading Bar → Reveal",
+    "text": "Start with an ASCII progress bar that fills from 0%→100% in 5 steps.\nAfter it reaches 100%, reveal the full answer.\nTopic: {YOUR TOPIC}.",
+    "tags": [
+      "fun"
+    ]
+  },
+  {
+    "id": "p18",
+    "title": "Haiku + SQL Mode",
+    "text": "Explain {DATA TASK} as:\n1) A haiku\n2) A minimal SQL example with indexes\n3) One pitfall and one test query",
+    "tags": [
+      "data",
+      "fun"
+    ]
+  },
+  {
+    "id": "p19",
+    "title": "Hex‑Speak Reply",
+    "text": "Answer in UTF‑8 hex bytes only for the first section (no spaces).\nThen decode it in a second section and continue normally.",
+    "tags": [
+      "fun"
+    ]
+  },
+  {
+    "id": "p20",
+    "title": "Greek Chorus Counsel",
+    "text": "Respond as a Greek chorus (strophe, antistrophe, epode) giving strategic advice on {DECISION}.\nEnd with a concise, modern recommendation.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p21",
+    "title": "Two Truths and a Lie (Detection Game)",
+    "text": "Present two correct statements and one plausible lie about {TOPIC}.\nAsk me to identify the lie, then reveal and correct it with a brief explanation.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p22",
+    "title": "Constraint Maze Answer",
+    "text": "Explain {TOPIC} where every sentence starts with the next letter of the alphabet from A→G.\nIf a letter is hard, creatively bend the phrasing but keep meaning intact.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p23",
+    "title": "Self‑Check then Solve",
+    "text": "Give your best answer to {QUESTION}.\nThen list 5 ways you might be wrong or incomplete.\nRevise the answer once incorporating the top 2 fixes.",
+    "tags": [
+      "meta"
+    ]
+  },
+  {
+    "id": "p24",
+    "title": "Personalized Recruiter Pitch",
+    "text": "Using what you know about me, craft a recruiter‑ready profile:\n- 4 bullet “spikes” with metrics\n- 2 crisp narratives (mission + craft)\n- One‑liner headline (max 12 words)",
+    "tags": [
+      "personal",
+      "career",
+      "writing"
+    ]
+  },
+  {
+    "id": "p25",
+    "title": "Meta‑Prompt: “Use What You Know About Me”",
+    "text": "Using what you know about me, propose 3 prompt ideas I would actually enjoy this week.\nFor each idea:\n- Title, why it fits me, one twist to make it playful\n- The exact prompt text ready to paste",
+    "tags": [
+      "personal",
+      "meta",
+      "fun"
+    ]
+  },
+  {
+    "id": "p26",
+    "title": "Konami Bonus Tips (Easter Egg)",
+    "text": "Pretend I entered the Konami code. Reveal 5 “advanced” hidden tips for using you more effectively on {WORKFLOW}, each with a 1‑line example prompt.",
+    "tags": [
+      "meta",
+      "fun"
+    ]
+  },
+  {
+    "id": "p27",
+    "title": "Code Refactoring Assistant",
+    "text": "Given a code snippet:\n- Rewrite it to improve readability and efficiency.\n- Add comments explaining any complex logic.\n- Ensure the functionality remains the same.",
+    "tags": [
+      "engineering"
+    ]
+  },
+  {
+    "id": "p28",
+    "title": "Code Reviewer",
+    "text": "Review the following code for quality:\n1) Summarize what the code is doing.\n2) Point out any potential bugs or edge cases.\n3) Suggest improvements or best practices (and explain why).",
+    "tags": [
+      "engineering",
+      "writing"
+    ]
+  },
+  {
+    "id": "p29",
+    "title": "System Design Coach",
+    "text": "You are a software architect. I need a system to do {X}:\n- Propose a high-level architecture with 3–5 key components.\n- Explain how data flows and why you chose each component.\n- List one potential bottleneck or risk and how to mitigate it.",
+    "tags": [
+      "engineering"
+    ]
+  },
+  {
+    "id": "p30",
+    "title": "Rubber Duck Debugger",
+    "text": "I'm debugging an issue with my code. Help me by asking step-by-step questions:\n- Ask one question at a time about the code, inputs, or assumptions.\n- Use my answers to guide the next question.\n- Continue until we identify the likely bug or solution.",
+    "tags": [
+      "engineering",
+      "education"
+    ]
+  },
+  {
+    "id": "p31",
+    "title": "Data Insights Explorer",
+    "text": "I have some data about {TOPIC}. Analyze it and provide insights:\n- Mention 3 notable patterns, trends, or outliers.\n- Suggest one possible reason or hypothesis for each pattern.\n- Propose 2 follow-up questions or analyses to dig deeper.",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "p32",
+    "title": "Excel Formula Helper",
+    "text": "I need a spreadsheet formula to accomplish this task: {DESCRIPTION}.\n- Provide the formula and specify if it's for Excel or Google Sheets.\n- Explain how it works step by step.\n- Mention any assumptions (like sheet names or data ranges).",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "p33",
+    "title": "Database Designer",
+    "text": "Design a simple database schema for {SCENARIO}:\n- List 3–5 tables with their names and key columns.\n- Describe the relationships between tables (e.g., one-to-many).\n- Provide one example query that this schema would support.",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "p34",
+    "title": "SWOT Analysis Guru",
+    "text": "Perform a SWOT analysis for {PROJECT/COMPANY} aiming to {GOAL}:\n- Strengths: 3 internal advantages.\n- Weaknesses: 3 internal limitations.\n- Opportunities: 3 external factors to leverage.\n- Threats: 3 external risks.\nKeep each point concise.",
+    "tags": [
+      "business"
+    ]
+  },
+  {
+    "id": "p35",
+    "title": "Marketing Plan Brainstormer",
+    "text": "Outline a basic marketing plan for {PRODUCT} targeting {AUDIENCE}:\n1) State the core value proposition in one sentence.\n2) List 3 marketing channels with one strategy each.\n3) Suggest one metric to measure success for each channel.",
+    "tags": [
+      "business"
+    ]
+  },
+  {
+    "id": "p36",
+    "title": "OKR Planner",
+    "text": "Draft quarterly OKRs for {TEAM/PROJECT}:\n- Propose 1–2 high-level Objectives.\n- Under each, list 2–3 Key Results (specific & measurable).\n- Ensure they align with {HIGHER GOAL} and are realistic for the quarter.",
+    "tags": [
+      "business"
+    ]
+  },
+  {
+    "id": "p37",
+    "title": "Product Launch Planner",
+    "text": "Create a launch plan for a new {PRODUCT TYPE} in {MARKET}:\n- Identify 3 critical pre-launch steps (and why they're important).\n- Suggest 3 marketing activities for launch week (with target channels).\n- Propose one metric to gauge launch success.",
+    "tags": [
+      "business"
+    ]
+  },
+  {
+    "id": "p38",
+    "title": "Email Tone Adjuster",
+    "text": "I have written an email about {SITUATION}. Rewrite it with a polite yet firm tone:\n- Preserve the key message and details.\n- Use professional language (no slang) and clear structure.\n- Make sure the request or point is stated courteously but assertively.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p39",
+    "title": "Grammar & Style Coach",
+    "text": "Analyze the following text for improvement:\n1. Correct any grammar and spelling mistakes.\n2. Suggest changes to improve clarity and tone.\n3. Provide a revised version of one tricky sentence as an example.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p40",
+    "title": "Jargon Simplifier",
+    "text": "Rewrite the following technical passage for a general audience:\n- Replace jargon or complex terms with simple words.\n- Use short, clear sentences.\n- Preserve the original meaning while making the explanation accessible to anyone.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p41",
+    "title": "Executive Summary Generator",
+    "text": "Summarize the following report for an executive audience:\n- Present 5 key findings or insights as bullet points.\n- Focus on high-level implications and numbers, not technical details.\n- Keep it concise and actionable.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p42",
+    "title": "Headline Variants Generator",
+    "text": "Given the article/content summary, propose 3 headline options:\n- One straightforward, SEO-friendly title.\n- One creative or humorous title to attract attention.\n- One ultra-concise title (max 5 words).\nEach should capture the main idea effectively.",
+    "tags": [
+      "writing",
+      "creative"
+    ]
+  },
+  {
+    "id": "p43",
+    "title": "Fairy Tale Remix",
+    "text": "Retell the story of {CLASSIC TALE} set in {NEW SETTING}:\n- Keep the basic plot but change characters or context to fit the setting.\n- Introduce two unique elements or characters fitting the new setting.\n- Maintain a similar moral or lesson by the end.",
+    "tags": [
+      "creative"
+    ]
+  },
+  {
+    "id": "p44",
+    "title": "Genre Flip Storyteller",
+    "text": "Take this scenario: {BRIEF SCENE}.\nRewrite it in a completely different genre:\n- Identify the original genre and the new genre.\n- Change the narration style and word choice to reflect the new genre's tone.\n- Keep the core events the same, but make it feel like a {NEW GENRE} story.",
+    "tags": [
+      "creative"
+    ]
+  },
+  {
+    "id": "p45",
+    "title": "Alternate POV Narrative",
+    "text": "Rewrite {STORY OR SCENE} from the perspective of a different character:\n- Convey the character's unique voice, thoughts, and feelings about the events.\n- Reveal at least one detail or secret the original perspective didn't show.\n- Keep the events consistent, only change the viewpoint and interpretation.",
+    "tags": [
+      "creative"
+    ]
+  },
+  {
+    "id": "p46",
+    "title": "Stand-up Routine Writer",
+    "text": "Craft a short stand-up comedy routine about {TOPIC}:\n- Open with a strong one-liner to grab attention.\n- Include 2–3 jokes or anecdotes, keeping them relatable and clean.\n- End with a callback or a punchline that ties the set together.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p47",
+    "title": "Introspective Q&A Guide",
+    "text": "I want to reflect on myself. Act as a thoughtful guide:\n- Start by asking an open-ended question about my background or values.\n- Based on my answer, ask a deeper follow-up or suggest a reflection.\n- Provide gentle insights or exercises if appropriate, focusing on helping me explore myself.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p48",
+    "title": "Shadow Self Dialogue",
+    "text": "You are my Jungian \"shadow\" self, the part of me I hide or repress:\n- Challenge my perspectives by pointing out inconsistencies or hidden feelings.\n- Ask me questions that make me examine uncomfortable or ignored aspects of myself.\n- Be honest but supportive, aiming to help me understand and integrate my shadow traits.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p49",
+    "title": "Future Self Letter",
+    "text": "Write a letter from me in 20 years, who has achieved {A GOAL}:\n- Describe what my future life is like and mention a few accomplishments.\n- Acknowledge the challenges I (the younger self) am facing now and how I overcame them.\n- Include advice, encouragement, and one lighthearted personal anecdote from the future.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p50",
+    "title": "Inner Child Conversation",
+    "text": "Help me talk to my inner child (my younger self):\n- As the inner child, start by expressing a concern or feeling.\n- As the adult self (also you), respond with reassurance and understanding.\n- Continue for a few exchanges, aiming to comfort the inner child and uncover any needs or messages.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p51",
+    "title": "Life Values Sorter",
+    "text": "Guide me to clarify my core values:\n- List 10 common values (e.g., honesty, creativity, security, family, achievement).\n- Ask me to choose the 3–5 that resonate most with me and explain why.\n- For each chosen value, suggest one way I can honor it in daily life.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p52",
+    "title": "Decision Clarity Coach",
+    "text": "I'm torn about {DECISION}. Help me analyze it:\n1. Ask me to describe the options I'm considering.\n2. For each option, have me list pros, cons, and feelings or values related to it.\n3. Summarize the key factors I mentioned for each option.\n4. Pose a final thought or question to help me decide, without directly choosing for me.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p53",
+    "title": "Gratitude Journal Companion",
+    "text": "Let's do a gratitude exercise:\n- Ask me to share one thing I'm grateful for today and why.\n- Respond with a positive reflection on that, and encourage detail or emotion.\n- Prompt me for one more small positive thing I noticed recently.\n- Conclude by suggesting I remember these moments on tough days.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p54",
+    "title": "Habits Improvement Planner",
+    "text": "I want to build better habits for {GOAL}:\n- Ask about my current routine and challenges with this habit.\n- Suggest one small, specific habit change to start with and how to implement it.\n- Outline a simple 1-week plan (when and how to do it each day).\n- Give a motivational tip to help me stick with it.",
+    "tags": [
+      "personal"
+    ]
+  },
+  {
+    "id": "p55",
+    "title": "Dream Interpreter",
+    "text": "I will describe a dream I had. Act as a dream interpreter:\n- Ask me 2–3 questions to clarify details or emotions from the dream.\n- Offer two possible interpretations, explaining the symbolism or feelings that lead to each.\n- End with a gentle note on how I might reflect on or learn from this dream.",
+    "tags": [
+      "personal",
+      "fun"
+    ]
+  },
+  {
+    "id": "p56",
+    "title": "Resume Bullet Optimizer",
+    "text": "Take this resume bullet point: \"{CURRENT BULLET}\".\n- Rewrite it to start with a strong action verb and include a concrete result or metric.\n- Make sure it highlights a relevant skill and the impact of my work.\n- Keep it clear and concise (one sentence).",
+    "tags": [
+      "career",
+      "writing"
+    ]
+  },
+  {
+    "id": "p57",
+    "title": "Cover Letter Drafter",
+    "text": "Write a short cover letter paragraph for a {JOB TITLE} position at {COMPANY}:\n- Express enthusiasm for the company/role in one sentence.\n- Highlight 1–2 key achievements or skills that match the job requirements.\n- End with a confident statement about how you can contribute, and an eagerness to discuss further.",
+    "tags": [
+      "career",
+      "writing"
+    ]
+  },
+  {
+    "id": "p58",
+    "title": "Mock Interviewer",
+    "text": "Let's do a mock interview for a {POSITION}:\n- Ask me a common but challenging interview question for this role.\n- After my answer, give brief feedback (what I did well, what to improve).\n- Then ask a tougher follow-up question. Repeat for 3 questions total.\n(Wait for my answer each time.)",
+    "tags": [
+      "career"
+    ]
+  },
+  {
+    "id": "p59",
+    "title": "Promotion Case Maker",
+    "text": "Help me prepare a case for why I deserve a promotion to {ROLE}:\n- Ask me to list some of my key accomplishments and contributions.\n- Using those, outline 3–5 bullet points linking my achievements to the new role's expectations.\n- Suggest a polite and confident way to phrase my request to my manager.",
+    "tags": [
+      "career"
+    ]
+  },
+  {
+    "id": "p60",
+    "title": "Networking Message Composer",
+    "text": "Draft a LinkedIn message to connect with {PERSON (e.g., a professional in your field)}:\n- Start by introducing myself briefly and how I found them.\n- Mention a specific reason for reaching out (common interest or their work on X).\n- Keep the tone friendly and professional, and end with a subtle invitation to respond (like a question).",
+    "tags": [
+      "career",
+      "writing"
+    ]
+  },
+  {
+    "id": "p61",
+    "title": "Socratic Tutor",
+    "text": "I want to understand {CONCEPT}. Instead of explaining it outright, teach me Socratically:\n- Begin with a fundamental question to assess my understanding.\n- Based on a hypothetical answer, ask a follow-up that guides me closer to the concept.\n- Continue this Q&A approach until the concept is explained, encouraging me to reason it out.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "p62",
+    "title": "Exam Crammer",
+    "text": "I'm studying {TOPIC}. Give me a practice question and answer:\n1. Pose a challenging question that could be on an exam (don't immediately give the answer).\n2. Provide the step-by-step solution and correct answer.\n3. Explain why each step or answer is correct, so I can understand the reasoning.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "p63",
+    "title": "Language Quizmaster",
+    "text": "Help me practice {LANGUAGE}:\n- Ask me 5 multiple-choice questions in {LANGUAGE} on vocabulary or grammar.\n- Wait for my answer after each question, then tell me if I'm correct and what it means.\n- Make questions suitable for a {LEVEL} learner and include some cultural tidbits in explanations.",
+    "tags": [
+      "education",
+      "games"
+    ]
+  },
+  {
+    "id": "p64",
+    "title": "Curriculum Designer",
+    "text": "I'm learning {SKILL/TOPIC}. Outline a 4-week learning plan:\n- Week 1: foundational topics or skills (list 2–3 specific subtopics or exercises).\n- Week 2: build on complexity with 2–3 topics/exercises.\n- Week 3: advanced concepts or projects (2–3 items).\n- Week 4: integration and review activities.\nInclude one recommended resource (book/site) for each week.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "p65",
+    "title": "Analogy Generator",
+    "text": "Explain {COMPLEX CONCEPT} using analogies:\n- Give one analogy related to sports or a game.\n- Give a second analogy using a daily life activity or object.\n- Give a third analogy using something in nature.\nEach analogy should be 2–3 sentences and make the concept easier to understand.",
+    "tags": [
+      "education",
+      "creative"
+    ]
+  },
+  {
+    "id": "p66",
+    "title": "Debate Club Simulator",
+    "text": "Let's simulate a fun debate:\n- You propose an eccentric debate topic and assign me a side (for or against).\n- I will write my argument; you (as the opponent) write a rebuttal with humor.\n- After one exchange each, you play a quirky judge and declare a winner with a funny reason.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p67",
+    "title": "Boss Battle Trivia",
+    "text": "I want to play a trivia boss battle:\n- Invent a villainous boss character who will ask me 5 trivia questions about {TOPIC}.\n- The boss has 5 HP. Each correct answer I give reduces its HP by 1; each wrong answer, I lose 1 HP (starting at 5).\n- Mix multiple-choice and open-ended questions. After each, tell me if I'm right and update HP.\n- Add funny trash-talk from the boss. If I win, have the boss dramatically surrender; if I lose, a humorous defeat line.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p68",
+    "title": "Text Adventure Game Master",
+    "text": "You are a text adventure game:\n- Begin by describing a scene and the player's situation, then ask what I do.\n- Wait for my input, then describe the result of my action and the new situation.\n- Include interactive elements like items or characters to interact with.\nContinue the story until I type \"end\".",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p69",
+    "title": "Riddle Master",
+    "text": "Let's play a riddle game:\n- You give me one riddle to solve (moderate difficulty).\n- If I guess incorrectly, provide a subtle hint and let me try again.\n- If I can't get it or guess correctly, reveal the answer and briefly explain it.\nThen optionally offer another riddle to continue.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p70",
+    "title": "Twenty Questions",
+    "text": "Let's play Twenty Questions:\n- Think of something (object, person, concept) but don't tell me.\n- I will ask yes/no questions to guess it. Only answer yes, no, or unsure.\n- Keep track of the number of questions (up to 20).\nAfter 20 questions, I'll make a guess and you reveal if I'm correct and what the answer was.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p71",
+    "title": "Mad Libs Game",
+    "text": "Let's play Mad Libs:\n- First, ask me to provide a list of words (e.g., a noun, a verb ending in -ing, an adjective, etc.) needed for a funny story.\n- Once I give them, plug them into a short story template you've prepared.\n- Present the final humorous story with my words filled in.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p72",
+    "title": "ASCII Artist",
+    "text": "Convert the description \"{SCENE OR OBJECT}\" into ASCII art:\n- Use characters to sketch a simple representation no more than 40 characters wide.\n- Capture the basic shape or outline so it's recognizable.\n- Keep it text-only, using spaces and symbols creatively.",
+    "tags": [
+      "images",
+      "fun"
+    ]
+  },
+  {
+    "id": "p73",
+    "title": "Image Description Generator",
+    "text": "Imagine an image of {SCENE}.\nDescribe it in detail as if writing alt-text:\n- Mention the main subjects, their positions, and actions.\n- Include details about the setting (background, lighting, colors).\n- Keep it objective (describe only what is visible, no interpretations), in 2–3 sentences.",
+    "tags": [
+      "images"
+    ]
+  },
+  {
+    "id": "p74",
+    "title": "Emoji Scene Maker",
+    "text": "Describe {SCENE or STORY} using only emojis:\n- Use a sequence of 10–20 emojis to depict the key elements and actions.\n- Try to convey the narrative or scene clearly through symbols.\n- After the emoji sequence, provide a one-line explanation translating it back to words.",
+    "tags": [
+      "images",
+      "fun"
+    ]
+  },
+  {
+    "id": "p75",
+    "title": "Whimsical Image Prompt",
+    "text": "Give me a creative prompt for an AI image generator:\n- The scene should combine two unlikely themes (e.g., \"medieval dragons\" and \"modern city\").\n- Include details about atmosphere, lighting, or art style to make it vivid.\n- Keep the prompt under 40 words, and make it imaginative and fun.",
+    "tags": [
+      "images",
+      "creative"
+    ]
+  },
+  {
+    "id": "p76",
+    "title": "Prompt Critic",
+    "text": "Evaluate this ChatGPT prompt I've written: \"{PROMPT}\".\n- Identify any unclear instructions or assumptions in it.\n- Suggest two specific improvements to make it more precise or effective.\n- Provide a revised version of the prompt that addresses these improvements.",
+    "tags": [
+      "meta"
+    ]
+  },
+  {
+    "id": "p77",
+    "title": "Travel Itinerary Planner",
+    "text": "Plan a 1-week trip to {DESTINATION} focusing on {INTEREST (e.g., food, history, nature)}:\n- Outline activities for each day (morning, afternoon, evening) with specific places or experiences.\n- Include at least one local dish to try and one travel tip.\n- Keep the itinerary realistic (consider travel time) and engaging.",
+    "tags": [
+      "lifestyle"
+    ]
+  },
+  {
+    "id": "p78",
+    "title": "Recipe Generator",
+    "text": "I'm craving {DISH or INGREDIENTS}. Give me a recipe:\n- List ingredients with exact quantities for 2 servings.\n- Provide step-by-step cooking instructions.\n- Include one cooking tip or variation suggestion at the end.",
+    "tags": [
+      "lifestyle"
+    ]
+  },
+  {
+    "id": "p79",
+    "title": "Room Makeover Ideas",
+    "text": "I want to redo my {ROOM} in a {STYLE} style:\n- Suggest a color scheme (walls, furniture, accents).\n- Recommend 3 changes or additions (furniture or decor) to achieve the style.\n- Include one tip to make the space comfortable and personalized.",
+    "tags": [
+      "lifestyle"
+    ]
+  },
+  {
+    "id": "p80",
+    "title": "Gift Brainstormer",
+    "text": "Suggest a creative gift for {RECIPIENT} who likes {INTERESTS}:\n- Provide 3 gift ideas: one inexpensive, one mid-range, one high-end.\n- Explain why each gift suits their interests or personality in one sentence.\n- Include a personal touch idea (e.g., customization or how to present it).",
+    "tags": [
+      "lifestyle"
+    ]
+  },
+  {
+    "id": "p81",
+    "title": "Movie Reviewer",
+    "text": "Write a movie review for \"{MOVIE}\":\n- Briefly summarize the premise without spoilers.\n- Discuss one aspect (acting, plot, visuals, etc.) that stood out positively, with an example.\n- Mention one thing that could have been better.\n- End with your overall recommendation (and who might enjoy it).",
+    "tags": [
+      "writing",
+      "creative"
+    ]
+  },
+  {
+    "id": "p82",
+    "title": "Book Club Synopsis",
+    "text": "Provide a synopsis for \"{BOOK}\":\n- Paragraph 1: introduce the setting and main characters.\n- Paragraph 2: outline the central conflict or plot (no major spoilers).\n- Paragraph 3: discuss a key theme or takeaway from the book.\nKeep it engaging and informative for someone who hasn't read it.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p83",
+    "title": "Style Imitator",
+    "text": "Rewrite the following text in the style of {STYLE OR PERSONA}:\n- Use vocabulary and tone characteristic of that style.\n- Keep the original meaning and facts.\nFor example, if style is \"Shakespearean\", use archaic terms and a dramatic tone.",
+    "tags": [
+      "writing",
+      "creative"
+    ]
+  },
+  {
+    "id": "p84",
+    "title": "FAQ Generator",
+    "text": "Read the text and create an FAQ section:\n- Come up with 3 questions that a reader might ask for clarification.\n- Answer each question concisely based on the information in the text.\n- Ensure the FAQs cover different key points from the text.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p85",
+    "title": "Feedback Sentiment Analyzer",
+    "text": "Analyze these customer feedback comments:\n- For each comment, label it as Positive, Negative, or Neutral.\n- Quote a short phrase from the comment that supports your label.\n- If a comment is Negative, suggest one improvement the team could make to address it.",
+    "tags": [
+      "business",
+      "data"
+    ]
+  },
+  {
+    "id": "p86",
+    "title": "Timeline Summarizer",
+    "text": "Turn the following event description into a timeline:\n- Identify 5 key events and list them in chronological order.\n- For each, give a date (if provided or infer an order) and a one-sentence description of what happened.\n- Make sure the timeline flows and captures the main storyline.",
+    "tags": [
+      "writing"
+    ]
+  },
+  {
+    "id": "p87",
+    "title": "Crossword Puzzle Maker",
+    "text": "Create a mini crossword puzzle themed around {THEME}:\n- Come up with 5 clues. For each, give the clue and the number of letters (e.g., \"1. A four-legged pet (3)\").\n- After listing clues, provide the answer key (clue number and answer for each).\nMake clues witty or interesting, and ensure answers fit the theme.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p88",
+    "title": "Song Parodist",
+    "text": "Write a parody of the song \"{SONG TITLE}\" about {TOPIC}:\n- Maintain the rhythm and structure of the original chorus (no need for all verses).\n- Include clever references or puns related to {TOPIC}.\n- Keep the tone lighthearted and funny (and avoid offensive language).",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p89",
+    "title": "Haiku Summary",
+    "text": "Summarize {TOPIC OR TEXT} as a haiku:\n- Use the 5-7-5 syllable pattern.\n- Capture the essence or feeling of the topic in just 3 lines.\nFor example, a haiku on rain might be: \"Gray sky weeps softly / Earth blooms under gentle taps / Life drinks in silence.\"",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p90",
+    "title": "Time Traveler Interviewer",
+    "text": "You are interviewing someone from the year {YEAR} (or {ERA}):\n- Set the scene by briefly describing the time period.\n- Ask 3 questions one by one about their life or world (waiting for their answer each time).\n- Provide the interviewee's answers, showcasing perspectives or facts from that time.\n- Keep the dialogue engaging and insightful about differences between now and then.",
+    "tags": [
+      "creative",
+      "education"
+    ]
+  },
+  {
+    "id": "p91",
+    "title": "Mythical Creature Biographer",
+    "text": "Invent a mythical creature and write an entry as if for a fantasy encyclopedia:\n- Describe its appearance and any special powers or behaviors.\n- Tell a short legend or story about it (how it was discovered, or an encounter with it).\n- Mention if it's friendly, dangerous, or misunderstood, and any habitat or diet info.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
+  },
+  {
+    "id": "p92",
+    "title": "Mnemonic Maker",
+    "text": "I need to remember {LIST OR CONCEPT}. Create a mnemonic:\n- If it's a list of items, come up with a catchy phrase or acronym where each word/letter stands for an item.\n- If it's a concept with parts, make a vivid analogy or phrase that encapsulates it.\n- Make the mnemonic easy to recall and a bit humorous or unusual to stick in memory.",
+    "tags": [
+      "education",
+      "creative"
+    ]
+  },
+  {
+    "id": "p93",
+    "title": "Detective Mystery Roleplay",
+    "text": "Let's play detective:\n- Present a short mystery scenario (a crime or puzzle) with a few clues.\n- Allow me to ask questions to investigate; answer based on clues and logic.\n- After I guess the solution (or if I give up), reveal the culprit or answer and explain the key clues that led to it.\nKeep the mystery solvable and engaging.",
+    "tags": [
+      "games",
+      "fun"
+    ]
+  },
+  {
+    "id": "p94",
+    "title": "Color Palette Generator",
+    "text": "Generate a color palette for {THEME or MOOD}:\n- Provide 5 colors with HEX codes.\n- Give a one-word description for each color's vibe or suggested use (e.g., \"Background\", \"Accent\", \"Energetic\").\nEnsure the colors complement each other and reflect the theme.",
+    "tags": [
+      "images"
+    ]
+  },
+  {
+    "id": "p95",
+    "title": "Release Notes Composer",
+    "text": "Turn these commit messages/changes into user-friendly release notes:\n- Group related changes under headings like \"New Features\", \"Improvements\", \"Bug Fixes\".\n- Rewrite each change in a clear, non-technical sentence (focus on what the user benefits or sees).\n- Keep the tone neutral and concise.",
+    "tags": [
+      "engineering",
+      "writing"
+    ]
+  },
+  {
+    "id": "p96",
+    "title": "Social Post Stylist",
+    "text": "Craft a post for {PLATFORM} about {CONTENT}:\n- Keep it within the platform's typical character limit.\n- Use a tone appropriate for the platform (e.g., witty for Twitter, friendly storytelling for Instagram).\n- Include an emoji and a relevant hashtag if suitable.",
+    "tags": [
+      "writing",
+      "business"
+    ]
+  },
+  {
+    "id": "p97",
+    "title": "Dialogue Scene Creator",
+    "text": "Write a scene mainly in dialogue between {CHARACTER A} and {CHARACTER B}:\n- Establish who the characters are and their situation in one line, then use dialogue.\n- Let their personalities show through what they say.\n- Through the conversation, reveal a secret or solve a misunderstanding by the end.",
+    "tags": [
+      "creative",
+      "writing"
+    ]
+  },
+  {
+    "id": "p98",
+    "title": "Math Problem Solver",
+    "text": "Solve the following math word problem step-by-step:\n- Restate the problem in simpler terms.\n- Show how to set up the equation or process to solve it.\n- Work through each step, explaining the reasoning.\n- Provide the final answer with appropriate units.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "p99",
+    "title": "Apology Letter Drafter",
+    "text": "Help me write an apology letter to {PERSON} about {ISSUE}:\n- Start with a clear apology and take responsibility.\n- Acknowledge their feelings and the impact of my actions.\n- Offer a way to make amends or assure it won't happen again.\n- Keep the tone sincere and respectful.",
+    "tags": [
+      "personal",
+      "writing"
+    ]
+  },
+  {
+    "id": "p100",
+    "title": "Fortune Cookie Writer",
+    "text": "Come up with 3 fortune cookie messages:\n- Each should be a single sentence of wisdom or humor.\n- Keep them positive or insightful (and family-friendly).\nFor example: \"A fresh start will put you on your way.\" Now your turn!",
+    "tags": [
+      "fun",
+      "creative"
+    ]
+  }
+]
