@@ -115,6 +115,7 @@
     .placeholder-input:focus{ outline:none; border-bottom-color:var(--ring); }
 
     .card-actions{ position:absolute; right:10px; bottom:10px; display:flex; gap:8px; }
+    .card-share{ position:absolute; left:10px; bottom:10px; }
     .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.16); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:8px 12px; border-radius:12px; cursor:pointer; user-select:none; color:var(--text-0); }
     .btn:hover{ border-color: color-mix(in lab, var(--brand) 40%, transparent) }
     .btn:active{ transform: translateY(1px) }
@@ -186,6 +187,10 @@
   const TAG_CLASS = "tag";
   const SPAN_ELEMENT = "span";
   const DOM_CONTENT_LOADED_EVENT = "DOMContentLoaded";
+  const BUTTON_CLASS = "btn";
+  const SHARE_BUTTON_CLASS = "card-share";
+  const ARIA_SHARE_LABEL = "Copy card link:";
+  const HASH_SYMBOL = "#";
   /** placeholder constants for text inputs */
   const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
   const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
@@ -274,7 +279,7 @@
 
   // createCard builds a card for a prompt, wiring tag selection.
   function createCard(item){
-    const card=document.createElement("article"); card.className="card"; card.setAttribute("role","listitem"); card.tabIndex=0;
+    const card=document.createElement("article"); card.className="card"; card.id=item.id; card.setAttribute("role","listitem"); card.tabIndex=0;
 
     const header=document.createElement("div"); header.className="card-header";
     header.innerHTML=`<span class="tag-dot" aria-hidden="true"></span><h3 class="card-title">${escapeHTML(item.title)}</h3>`;
@@ -296,9 +301,11 @@
     card.appendChild(text);
 
     const actions=document.createElement("div"); actions.className="card-actions";
-    const btn=document.createElement("button"); btn.className="btn"; btn.type="button"; btn.setAttribute("aria-label",`Copy prompt: ${item.title}`);
+    const btn=document.createElement("button"); btn.className=BUTTON_CLASS; btn.type="button"; btn.setAttribute("aria-label",`Copy prompt: ${item.title}`);
     btn.innerHTML=copyIcon()+`<span>Copy</span>`; btn.onclick=()=>copyPrompt(card);
     actions.appendChild(btn); card.appendChild(actions);
+    const shareButton=document.createElement("button"); shareButton.className=BUTTON_CLASS+" "+SHARE_BUTTON_CLASS; shareButton.type="button"; shareButton.setAttribute("aria-label",`${ARIA_SHARE_LABEL} ${item.title}`);
+    shareButton.innerHTML=shareIcon(); shareButton.onclick=()=>copyCardUrl(card); card.appendChild(shareButton);
 
     const toast=document.createElement("div"); toast.className="copied"; toast.textContent="Copied ✓"; card.appendChild(toast);
 
@@ -323,7 +330,25 @@
       fallback.remove();
     });
   }
+  /** copyCardUrl writes the card URL to the clipboard */
+  function copyCardUrl(cardElement){
+    const baseUrl=location.href.split(HASH_SYMBOL)[0];
+    const cardUrl=baseUrl+HASH_SYMBOL+cardElement.id;
+    navigator.clipboard.writeText(cardUrl).then(()=>{
+      const toastElement=$(".copied",cardElement); toastElement.setAttribute("data-show","true"); setTimeout(()=>toastElement.setAttribute("data-show","false"),1200);
+    }).catch(()=>{
+      const fallbackInput=document.createElement("textarea");
+      fallbackInput.value=cardUrl;
+      fallbackInput.style.position="fixed";
+      fallbackInput.style.left="-9999px";
+      document.body.appendChild(fallbackInput);
+      fallbackInput.select();
+      document.execCommand("copy");
+      fallbackInput.remove();
+    });
+  }
   function copyIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`; }
+  function shareIcon(){ return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.02-4.11A3 3 0 1 1 18 6a3 3 0 0 1-2.05-.81L8.94 9.23a3 3 0 1 0 0 5.54l7.01 4.1A3 3 0 1 1 18 16.08z"/></svg>`; }
   function escapeHTML(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 
   // ====== SEARCH + PERSIST ======
