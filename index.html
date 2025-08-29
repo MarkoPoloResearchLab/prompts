@@ -8,6 +8,15 @@
 
   <link rel="stylesheet" href="prompt-bubbles.css" />
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-R6J165F21E"></script>
+  <script>
+    /** analyticsId identifies the site for Google Analytics */
+    const ANALYTICS_ID = "G-R6J165F21E";
+    /** gtag pushes analytics events to the data layer */
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", ANALYTICS_ID);
+  </script>
 </head>
 
 <body>
