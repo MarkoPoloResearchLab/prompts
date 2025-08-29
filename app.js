@@ -1,10 +1,3 @@
-/** initializeAnalytics configures Google Analytics tracking */
-window.dataLayer = window.dataLayer || [];
-function gtag(){ dataLayer.push(arguments); }
-const ANALYTICS_ID = "G-R6J165F21E";
-gtag("js", new Date());
-gtag("config", ANALYTICS_ID);
-
 let promptsList = [];
 const PROMPTS_PATH = "prompts.json";
 /** loadPrompts retrieves prompt data from a JSON file and assigns it to the global list */
