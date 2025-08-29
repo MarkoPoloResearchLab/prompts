@@ -1,5 +1,5 @@
 let promptsList = [];
-const PROMPTS_PATH = "prompts.json";
+const PROMPTS_PATH = "./assets/data/prompts.json";
 /** loadPrompts retrieves prompt data from a JSON file and assigns it to the global list */
 async function loadPrompts() {
   const response = await fetch(PROMPTS_PATH);
