@@ -20,7 +20,11 @@ const DOM_CONTENT_LOADED_EVENT = "DOMContentLoaded";
 const BUTTON_CLASS = "btn";
 const SHARE_BUTTON_CLASS = "card-share";
 const ARIA_SHARE_LABEL = "Copy card link:";
-const SHARE_ICON_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.02-4.11A3 3 0 1 1 18 6a3 3 0 0 1-2.05-.81L8.94 9.23a3 3 0 1 0 0 5.54l7.01 4.1A3 3 0 1 1 18 16.08z"/></svg>`;
+/** SHARE_ICON_IMAGE_SRC provides the CDN URL for the share icon image */
+const SHARE_ICON_IMAGE_SRC = "https://raw.githubusercontent.com/tailwindlabs/heroicons/master/src/24/outline/share.svg";
+const IMAGE_ELEMENT = "img";
+const EMPTY_ALT_TEXT = "";
+const ARIA_HIDDEN_TRUE = "true";
 const HASH_SYMBOL = "#";
 const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
 const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
@@ -190,7 +194,7 @@ function createCard(promptItem) {
   shareButtonElement.className = `${BUTTON_CLASS} ${SHARE_BUTTON_CLASS}`;
   shareButtonElement.type = "button";
   shareButtonElement.setAttribute("aria-label", `${ARIA_SHARE_LABEL} ${promptItem.title}`);
-  shareButtonElement.innerHTML = shareIcon();
+  shareIcon(shareButtonElement);
   shareButtonElement.onclick = () => copyCardUrl(cardElement);
   cardElement.appendChild(shareButtonElement);
 
@@ -253,9 +257,13 @@ function copyIcon() {
   return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
 }
 
-/** shareIcon returns the share icon SVG markup */
-function shareIcon() {
-  return SHARE_ICON_SVG;
+/** shareIcon appends a share icon image to the provided button element */
+function shareIcon(targetButtonElement) {
+  const iconImageElement = document.createElement(IMAGE_ELEMENT);
+  iconImageElement.src = SHARE_ICON_IMAGE_SRC;
+  iconImageElement.alt = EMPTY_ALT_TEXT;
+  iconImageElement.setAttribute("aria-hidden", ARIA_HIDDEN_TRUE);
+  targetButtonElement.appendChild(iconImageElement);
 }
 
 /** escapeHTML escapes special characters for safe HTML insertion */

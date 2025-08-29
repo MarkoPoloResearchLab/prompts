@@ -107,7 +107,7 @@
     .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.16); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:8px 12px; border-radius:12px; cursor:pointer; user-select:none; color:var(--text-0); }
     .btn:hover{ border-color: color-mix(in lab, var(--brand) 40%, transparent) }
     .btn:active{ transform: translateY(1px) }
-    .btn svg{ width:18px; height:18px }
+    .btn svg, .card-share img{ width:18px; height:18px }
 
     .copied{ position:absolute; left:12px; bottom:10px; font-size:12px; padding:6px 10px; border-radius:10px; background: color-mix(in lab, var(--ok) 20%, var(--bg-c)); color: color-mix(in lab, var(--text-0) 60%, var(--ok)); border: 1px solid color-mix(in lab, var(--ok) 35%, transparent); opacity:0; transform: translateY(6px); transition:all .18s ease; pointer-events:none; }
     .copied[data-show="true"]{ opacity:1; transform:translateY(0) }
