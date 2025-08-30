@@ -24,7 +24,6 @@ const SHARE_ICON_ALTERNATIVE_TEXT = "Share icon";
 const HASH_SYMBOL = "#";
 const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
 const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
-const PLACEHOLDER_CLASS = "placeholder-input";
 const INPUT_ELEMENT = "input";
 const PLACEHOLDER_SELECTOR = INPUT_ELEMENT+"["+PLACEHOLDER_ATTRIBUTE+"]";
 const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
@@ -50,6 +49,7 @@ const SCROLL_BLOCK_CENTER = "center";
 const THEME_TOGGLE_ID = "themeToggle";
 const THEME_LOCAL_STORAGE_KEY = "prompt-bubbles-theme";
 const DATA_BS_THEME_ATTRIBUTE = "data-bs-theme";
+const DATA_MDB_THEME_ATTRIBUTE = "data-mdb-theme";
 const LIGHT_THEME = "light";
 const DARK_THEME = "dark";
 
@@ -86,7 +86,6 @@ function renderPromptContent(rawText) {
     if (precedingSegment) fragment.appendChild(document.createTextNode(precedingSegment));
     const placeholderName = matchResult[1];
     const placeholderInput = document.createElement(INPUT_ELEMENT);
-    placeholderInput.className = PLACEHOLDER_CLASS;
     placeholderInput.setAttribute(PLACEHOLDER_ATTRIBUTE, placeholderName);
     placeholderInput.placeholder = placeholderName;
     placeholderInput.style.width = `${placeholderName.length}ch`;
@@ -313,12 +312,13 @@ function restore() {
   } catch {}
 }
 
-/** applyTheme sets the visual theme on the document body */
+/** applyTheme sets Bootstrap and MDB theme attributes on the document body */
 function applyTheme(themeName) {
   document.body.setAttribute(DATA_BS_THEME_ATTRIBUTE, themeName);
+  document.body.setAttribute(DATA_MDB_THEME_ATTRIBUTE, themeName);
 }
 
-/** initThemeToggle restores and wires the dark mode switch */
+/** initThemeToggle restores and wires the theme switch for Bootstrap and MDB */
 function initThemeToggle() {
   const themeToggleElement = selectSingle(`#${THEME_TOGGLE_ID}`);
   const storedTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) || LIGHT_THEME;
