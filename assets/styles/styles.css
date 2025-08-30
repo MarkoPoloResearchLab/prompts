@@ -104,6 +104,10 @@
 
     .card-actions{ position:absolute; right:10px; bottom:10px; display:flex; gap:8px; }
     .card-share{ position:absolute; left:10px; bottom:10px; }
+    .card-share img{ filter:invert(1); }
+    @media (prefers-color-scheme: light){
+      .card-share img{ filter:invert(0); }
+    }
     .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.16); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:8px 12px; border-radius:12px; cursor:pointer; user-select:none; color:var(--text-0); }
     .btn:hover{ border-color: color-mix(in lab, var(--brand) 40%, transparent) }
     .btn:active{ transform: translateY(1px) }

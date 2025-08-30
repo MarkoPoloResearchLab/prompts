@@ -20,8 +20,8 @@ const DOM_CONTENT_LOADED_EVENT = "DOMContentLoaded";
 const BUTTON_CLASS = "btn";
 const SHARE_BUTTON_CLASS = "card-share";
 const ARIA_SHARE_LABEL = "Copy card link:";
-const SHARE_ICON_IMAGE_SRC = "https://cdn.jsdelivr.net/npm/@material-design-icons/svg@0.14.15/filled/share.svg";
-const SHARE_ICON_ALT_TEXT = "Share icon";
+const SHARE_ICON_IMAGE_SOURCE = "https://cdn.jsdelivr.net/npm/@material-design-icons/svg@0.14.15/filled/share.svg";
+const SHARE_ICON_ALTERNATIVE_TEXT = "Share icon";
 const HASH_SYMBOL = "#";
 const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
 const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
@@ -256,7 +256,7 @@ function copyIcon() {
 
 /** shareIcon returns the markup for the share icon image element */
 function shareIcon() {
-  return `<img src="${SHARE_ICON_IMAGE_SRC}" alt="${SHARE_ICON_ALT_TEXT}" />`;
+  return `<img src="${SHARE_ICON_IMAGE_SOURCE}" alt="${SHARE_ICON_ALTERNATIVE_TEXT}" />`;
 }
 
 /** escapeHTML escapes special characters for safe HTML insertion */
