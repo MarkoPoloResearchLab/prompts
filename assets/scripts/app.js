@@ -14,11 +14,10 @@ const state = { search: "", tag: TAG_ALL };
 const CLICK_EVENT = "click";
 const INPUT_EVENT = "input";
 const KEYDOWN_EVENT = "keydown";
-const TAG_CLASS = "tag";
 const SPAN_ELEMENT = "span";
 const DOM_CONTENT_LOADED_EVENT = "DOMContentLoaded";
-const BUTTON_CLASS = "btn";
-const SHARE_BUTTON_CLASS = "card-share";
+const BUTTON_CLASS = "btn btn-primary btn-sm";
+const SHARE_BUTTON_CLASS = "card-share btn btn-outline-secondary btn-sm";
 const ARIA_SHARE_LABEL = "Copy card link:";
 const SHARE_ICON_IMAGE_SOURCE = "https://cdn.jsdelivr.net/npm/@material-design-icons/svg@0.14.15/filled/share.svg";
 const SHARE_ICON_ALTERNATIVE_TEXT = "Share icon";
@@ -35,11 +34,24 @@ const ENTER_KEY = "Enter";
 const COPY_LABEL_TEXT = "Copy";
 const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
 const CHIP_CLASS = "chip";
+const CHIP_BASE_CLASSES = `${CHIP_CLASS} btn btn-sm`;
+const CHIP_ACTIVE_CLASS = "btn-primary";
+const CHIP_INACTIVE_CLASS = "btn-outline-primary";
 const CHIP_BAR_ID = "chipBar";
 const CHIP_BAR_SELECTOR = `#${CHIP_BAR_ID}`;
+const TAG_BADGE_CLASSES = "tag badge bg-secondary me-1";
+const GRID_COLUMN_CLASS = "col";
+const CARD_CLASS = "prompt-card card d-flex flex-column h-100";
+const CARD_BODY_CLASS = "card-body d-flex flex-column";
+const GRID_NO_MATCH_COLUMN_CLASS = "col-12 text-center text-muted";
 const LINKED_CARD_ATTRIBUTE = "data-linked-card";
 const SCROLL_BEHAVIOR_SMOOTH = "smooth";
 const SCROLL_BLOCK_CENTER = "center";
+const THEME_TOGGLE_ID = "themeToggle";
+const THEME_LOCAL_STORAGE_KEY = "prompt-bubbles-theme";
+const DATA_BS_THEME_ATTRIBUTE = "data-bs-theme";
+const LIGHT_THEME = "light";
+const DARK_THEME = "dark";
 
 /** selectSingle returns the first element matching selector within root */
 const selectSingle = (selector, root=document) => root.querySelector(selector);
@@ -110,10 +122,9 @@ function renderChips() {
   chipBarElement.innerHTML = "";
   uniqueTags().forEach(tagName => {
     const chipElement = document.createElement("button");
-    chipElement.className = CHIP_CLASS;
+    chipElement.className = `${CHIP_BASE_CLASSES} ${tagName === state.tag ? CHIP_ACTIVE_CLASS : CHIP_INACTIVE_CLASS}`;
     chipElement.type = "button";
     chipElement.textContent = tagName;
-    chipElement.setAttribute("data-active", tagName === state.tag ? "true" : "false");
     chipElement.onclick = () => selectTag(tagName);
     chipBarElement.appendChild(chipElement);
   });
@@ -121,9 +132,11 @@ function renderChips() {
 
 /** highlightActiveChip updates chip states to reflect the current tag */
 function highlightActiveChip() {
-  selectAllElements(`${CHIP_BAR_SELECTOR} .${CHIP_CLASS}`).forEach(chipElement =>
-    chipElement.setAttribute("data-active", String(chipElement.textContent === state.tag))
-  );
+  selectAllElements(`${CHIP_BAR_SELECTOR} .${CHIP_CLASS}`).forEach(chipElement => {
+    const isActive = chipElement.textContent === state.tag;
+    chipElement.classList.toggle(CHIP_ACTIVE_CLASS, isActive);
+    chipElement.classList.toggle(CHIP_INACTIVE_CLASS, !isActive);
+  });
 }
 
 /** selectTag updates the selected tag and refreshes the grid and chip states */
@@ -140,13 +153,17 @@ function renderGrid() {
   const searchQuery = state.search.trim().toLowerCase();
   const matchingPrompts = promptsList.filter(promptItem => matches(promptItem, searchQuery, state.tag));
   gridElement.innerHTML = "";
-  matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
+  matchingPrompts.forEach(promptItem => {
+    const columnElement = document.createElement("div");
+    columnElement.className = GRID_COLUMN_CLASS;
+    columnElement.appendChild(createCard(promptItem));
+    gridElement.appendChild(columnElement);
+  });
   if (matchingPrompts.length === 0) {
-    const placeholderParagraph = document.createElement("p");
-    placeholderParagraph.style.color = "var(--text-1)";
-    placeholderParagraph.style.gridColumn = "1/-1";
-    placeholderParagraph.textContent = NO_MATCH_MESSAGE;
-    gridElement.appendChild(placeholderParagraph);
+    const columnElement = document.createElement("div");
+    columnElement.className = GRID_NO_MATCH_COLUMN_CLASS;
+    columnElement.textContent = NO_MATCH_MESSAGE;
+    gridElement.appendChild(columnElement);
   }
   highlightHashTarget();
 }
@@ -164,32 +181,36 @@ function highlightHashTarget() {
 
 /** createCard builds a card for a prompt, wiring tag selection */
 function createCard(promptItem) {
-  const cardElement = document.createElement("article");
-  cardElement.className = "card";
+  const cardElement = document.createElement("div");
+  cardElement.className = CARD_CLASS;
   cardElement.id = promptItem.id;
   cardElement.setAttribute("role", "listitem");
   cardElement.tabIndex = 0;
 
-  const headerElement = document.createElement("div");
-  headerElement.className = "card-header";
-  headerElement.innerHTML = `<span class="tag-dot" aria-hidden="true"></span><h3 class="card-title">${escapeHTML(promptItem.title)}</h3>`;
-  cardElement.appendChild(headerElement);
+  const bodyElement = document.createElement("div");
+  bodyElement.className = CARD_BODY_CLASS;
+  cardElement.appendChild(bodyElement);
+
+  const titleElement = document.createElement("h3");
+  titleElement.className = "card-title fs-6";
+  titleElement.textContent = promptItem.title;
+  bodyElement.appendChild(titleElement);
 
   const tagsContainerElement = document.createElement("div");
-  tagsContainerElement.className = "card-tags";
+  tagsContainerElement.className = "mb-2";
   promptItem.tags.forEach(tagName => {
     const tagElement = document.createElement(SPAN_ELEMENT);
-    tagElement.className = TAG_CLASS;
+    tagElement.className = TAG_BADGE_CLASSES;
     tagElement.textContent = tagName;
     tagElement.addEventListener(CLICK_EVENT, () => selectTag(tagName));
     tagsContainerElement.appendChild(tagElement);
   });
-  cardElement.appendChild(tagsContainerElement);
+  bodyElement.appendChild(tagsContainerElement);
 
   const textElement = document.createElement("pre");
   textElement.className = "card-text";
   textElement.appendChild(renderPromptContent(promptItem.text));
-  cardElement.appendChild(textElement);
+  bodyElement.appendChild(textElement);
 
   const actionsElement = document.createElement("div");
   actionsElement.className = "card-actions";
@@ -203,7 +224,7 @@ function createCard(promptItem) {
   cardElement.appendChild(actionsElement);
 
   const shareButtonElement = document.createElement("button");
-  shareButtonElement.className = `${BUTTON_CLASS} ${SHARE_BUTTON_CLASS}`;
+  shareButtonElement.className = SHARE_BUTTON_CLASS;
   shareButtonElement.type = "button";
   shareButtonElement.setAttribute("aria-label", `${ARIA_SHARE_LABEL} ${promptItem.title}`);
   shareButtonElement.innerHTML = shareIcon();
@@ -274,17 +295,6 @@ function shareIcon() {
   return `<img src="${SHARE_ICON_IMAGE_SOURCE}" alt="${SHARE_ICON_ALTERNATIVE_TEXT}" />`;
 }
 
-/** escapeHTML escapes special characters for safe HTML insertion */
-function escapeHTML(text) {
-  return text.replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
-
 /** handleSearch persists and renders the grid for the provided searchText */
 const handleSearch = debounce(searchText => { state.search = searchText; persist(); renderGrid(); }, 80);
 
@@ -303,12 +313,31 @@ function restore() {
   } catch {}
 }
 
+/** applyTheme sets the visual theme on the document body */
+function applyTheme(themeName) {
+  document.body.setAttribute(DATA_BS_THEME_ATTRIBUTE, themeName);
+}
+
+/** initThemeToggle restores and wires the dark mode switch */
+function initThemeToggle() {
+  const themeToggleElement = selectSingle(`#${THEME_TOGGLE_ID}`);
+  const storedTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) || LIGHT_THEME;
+  applyTheme(storedTheme);
+  themeToggleElement.checked = storedTheme === DARK_THEME;
+  themeToggleElement.addEventListener(INPUT_EVENT, () => {
+    const selectedTheme = themeToggleElement.checked ? DARK_THEME : LIGHT_THEME;
+    applyTheme(selectedTheme);
+    try { localStorage.setItem(THEME_LOCAL_STORAGE_KEY, selectedTheme); } catch {}
+  });
+}
+
 /** init loads prompts and wires search interactions */
 async function init() {
   await loadPrompts();
   restore();
   renderChips();
   renderGrid();
+  initThemeToggle();
   const searchInputElement = selectSingle("#searchInput");
   const clearSearchButton = selectSingle("#clearSearch");
   searchInputElement.value = state.search;
