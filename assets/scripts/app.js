@@ -21,6 +21,7 @@ const SHARE_BUTTON_CLASS = "card-share btn btn-outline-secondary btn-sm";
 const ARIA_SHARE_LABEL = "Copy card link:";
 const SHARE_ICON_IMAGE_SOURCE = "https://cdn.jsdelivr.net/npm/@material-design-icons/svg@0.14.15/filled/share.svg";
 const SHARE_ICON_ALTERNATIVE_TEXT = "Share icon";
+const COPY_ICON_SVG = "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z\"/></svg>";
 const HASH_SYMBOL = "#";
 const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
 const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
@@ -30,7 +31,6 @@ const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
 const COPIED_TEXT = "Copied ✓";
 const SEARCH_SHORTCUT_KEY = "/";
 const ENTER_KEY = "Enter";
-const COPY_LABEL_TEXT = "Copy";
 const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
 const CHIP_CLASS = "chip";
 const CHIP_BASE_CLASSES = `${CHIP_CLASS} btn btn-sm`;
@@ -42,6 +42,7 @@ const TAG_BADGE_CLASSES = "tag badge bg-secondary me-1";
 const GRID_COLUMN_CLASS = "col";
 const CARD_CLASS = "prompt-card card d-flex flex-column h-100";
 const CARD_BODY_CLASS = "card-body d-flex flex-column";
+const CARD_ACTIONS_CLASS = "card-actions";
 const GRID_NO_MATCH_COLUMN_CLASS = "col-12 text-center text-muted";
 const LINKED_CARD_ATTRIBUTE = "data-linked-card";
 const SCROLL_BEHAVIOR_SMOOTH = "smooth";
@@ -155,7 +156,7 @@ function renderGrid() {
   matchingPrompts.forEach(promptItem => {
     const columnElement = document.createElement("div");
     columnElement.className = GRID_COLUMN_CLASS;
-    columnElement.appendChild(createCard(promptItem));
+    columnElement.appendChild(renderCard(promptItem));
     gridElement.appendChild(columnElement);
   });
   if (matchingPrompts.length === 0) {
@@ -178,8 +179,8 @@ function highlightHashTarget() {
   }
 }
 
-/** createCard builds a card for a prompt, wiring tag selection */
-function createCard(promptItem) {
+/** renderCard builds a card for a prompt, wiring tag selection */
+function renderCard(promptItem) {
   const cardElement = document.createElement("div");
   cardElement.className = CARD_CLASS;
   cardElement.id = promptItem.id;
@@ -212,15 +213,14 @@ function createCard(promptItem) {
   bodyElement.appendChild(textElement);
 
   const actionsElement = document.createElement("div");
-  actionsElement.className = "card-actions";
+  actionsElement.className = CARD_ACTIONS_CLASS;
   const copyButtonElement = document.createElement("button");
   copyButtonElement.className = BUTTON_CLASS;
   copyButtonElement.type = "button";
   copyButtonElement.setAttribute("aria-label", `${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`);
-  copyButtonElement.innerHTML = copyIcon() + `<span>${COPY_LABEL_TEXT}</span>`;
+  copyButtonElement.innerHTML = copyIcon();
   copyButtonElement.onclick = () => copyPrompt(cardElement);
   actionsElement.appendChild(copyButtonElement);
-  cardElement.appendChild(actionsElement);
 
   const shareButtonElement = document.createElement("button");
   shareButtonElement.className = SHARE_BUTTON_CLASS;
@@ -228,7 +228,9 @@ function createCard(promptItem) {
   shareButtonElement.setAttribute("aria-label", `${ARIA_SHARE_LABEL} ${promptItem.title}`);
   shareButtonElement.innerHTML = shareIcon();
   shareButtonElement.onclick = () => copyCardUrl(cardElement);
-  cardElement.appendChild(shareButtonElement);
+  actionsElement.appendChild(shareButtonElement);
+
+  cardElement.appendChild(actionsElement);
 
   const toastElement = document.createElement("div");
   toastElement.className = "copied";
@@ -286,7 +288,7 @@ function copyCardUrl(cardElement) {
 
 /** copyIcon returns the SVG for the copy button */
 function copyIcon() {
-  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+  return COPY_ICON_SVG;
 }
 
 /** shareIcon returns the markup for the share icon image element */
