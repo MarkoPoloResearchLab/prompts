@@ -897,5 +897,14 @@
       "personal",
       "fun"
     ]
+  },
+  {
+    "id": "p106",
+    "title": "BeatBot Celebration",
+    "text": "Use BeatBot to make a sick beat to celebrate {CELEBRATION}.",
+    "tags": [
+      "creative",
+      "fun"
+    ]
   }
 ]
