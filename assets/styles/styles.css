@@ -92,6 +92,7 @@
     }
     .card:hover{ transform:translateY(-1px) }
     .card:focus-within{ outline:2px solid var(--ring) }
+    .card[data-linked-card="true"]{ outline:2px solid var(--ring) }
 
     .card-header{ display:flex; align-items:center; gap:10px; }
     .tag-dot{ width:10px; height:10px; border-radius:50%; background: radial-gradient(circle at 30% 30%, var(--brand), var(--brand-2)); box-shadow:0 0 0 3px color-mix(in lab, var(--brand) 20%, transparent); }

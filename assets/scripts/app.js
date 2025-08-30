@@ -37,6 +37,9 @@ const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
 const CHIP_CLASS = "chip";
 const CHIP_BAR_ID = "chipBar";
 const CHIP_BAR_SELECTOR = `#${CHIP_BAR_ID}`;
+const LINKED_CARD_ATTRIBUTE = "data-linked-card";
+const SCROLL_BEHAVIOR_SMOOTH = "smooth";
+const SCROLL_BLOCK_CENTER = "center";
 
 /** selectSingle returns the first element matching selector within root */
 const selectSingle = (selector, root=document) => root.querySelector(selector);
@@ -144,6 +147,18 @@ function renderGrid() {
     placeholderParagraph.style.gridColumn = "1/-1";
     placeholderParagraph.textContent = NO_MATCH_MESSAGE;
     gridElement.appendChild(placeholderParagraph);
+  }
+  highlightHashTarget();
+}
+
+/** highlightHashTarget scrolls and marks the card matching the location hash */
+function highlightHashTarget() {
+  const hashValue = location.hash.slice(HASH_SYMBOL.length);
+  if (!hashValue) return;
+  const linkedCard = selectSingle(`#${CSS.escape(hashValue)}`);
+  if (linkedCard) {
+    linkedCard.setAttribute(LINKED_CARD_ATTRIBUTE, "true");
+    linkedCard.scrollIntoView({ behavior: SCROLL_BEHAVIOR_SMOOTH, block: SCROLL_BLOCK_CENTER });
   }
 }
 
