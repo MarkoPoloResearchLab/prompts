@@ -14,32 +14,47 @@ const state = { search: "", tag: TAG_ALL };
 const CLICK_EVENT = "click";
 const INPUT_EVENT = "input";
 const KEYDOWN_EVENT = "keydown";
-const TAG_CLASS = "tag";
 const SPAN_ELEMENT = "span";
 const DOM_CONTENT_LOADED_EVENT = "DOMContentLoaded";
-const BUTTON_CLASS = "btn";
-const SHARE_BUTTON_CLASS = "card-share";
+const ACTION_BUTTON_DIMENSION = "2.5rem";
+const ACTION_BUTTON_BASE_CLASSES = "btn btn-sm d-inline-flex align-items-center justify-content-center p-2";
+const COPY_BUTTON_CLASSES = `${ACTION_BUTTON_BASE_CLASSES} btn-primary`;
+const SHARE_BUTTON_CLASSES = `${ACTION_BUTTON_BASE_CLASSES} btn-outline-secondary`;
 const ARIA_SHARE_LABEL = "Copy card link:";
 const SHARE_ICON_IMAGE_SOURCE = "https://cdn.jsdelivr.net/npm/@material-design-icons/svg@0.14.15/filled/share.svg";
 const SHARE_ICON_ALTERNATIVE_TEXT = "Share icon";
+const COPY_ICON_SVG = "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z\"/></svg>";
 const HASH_SYMBOL = "#";
 const PLACEHOLDER_PATTERN = /\{([^}]+)\}/g;
 const PLACEHOLDER_ATTRIBUTE = "data-placeholder";
-const PLACEHOLDER_CLASS = "placeholder-input";
 const INPUT_ELEMENT = "input";
 const PLACEHOLDER_SELECTOR = INPUT_ELEMENT+"["+PLACEHOLDER_ATTRIBUTE+"]";
 const NO_MATCH_MESSAGE = "No prompts match your search/filter.";
 const COPIED_TEXT = "Copied ✓";
 const SEARCH_SHORTCUT_KEY = "/";
 const ENTER_KEY = "Enter";
-const COPY_LABEL_TEXT = "Copy";
 const COPY_PROMPT_LABEL_PREFIX = "Copy prompt:";
 const CHIP_CLASS = "chip";
+const CHIP_BASE_CLASSES = `${CHIP_CLASS} btn btn-sm`;
+const CHIP_ACTIVE_CLASS = "btn-primary";
+const CHIP_INACTIVE_CLASS = "btn-outline-primary";
 const CHIP_BAR_ID = "chipBar";
 const CHIP_BAR_SELECTOR = `#${CHIP_BAR_ID}`;
+const TAG_BADGE_CLASSES = "tag badge bg-secondary me-1";
+const GRID_COLUMN_CLASS = "col";
+const CARD_CLASS = "prompt-card card d-flex flex-column h-100";
+const CARD_BODY_CLASS = "card-body d-flex flex-column";
+const CARD_ACTIONS_CLASS = "d-flex gap-2";
+const GRID_NO_MATCH_COLUMN_CLASS = "col-12 text-center text-muted";
 const LINKED_CARD_ATTRIBUTE = "data-linked-card";
 const SCROLL_BEHAVIOR_SMOOTH = "smooth";
 const SCROLL_BLOCK_CENTER = "center";
+const THEME_TOGGLE_ID = "themeToggle";
+const THEME_LOCAL_STORAGE_KEY = "prompt-bubbles-theme";
+const DATA_BS_THEME_ATTRIBUTE = "data-bs-theme";
+const DATA_MDB_THEME_ATTRIBUTE = "data-mdb-theme";
+const LIGHT_THEME = "light";
+const DARK_THEME = "dark";
 
 /** selectSingle returns the first element matching selector within root */
 const selectSingle = (selector, root=document) => root.querySelector(selector);
@@ -74,7 +89,6 @@ function renderPromptContent(rawText) {
     if (precedingSegment) fragment.appendChild(document.createTextNode(precedingSegment));
     const placeholderName = matchResult[1];
     const placeholderInput = document.createElement(INPUT_ELEMENT);
-    placeholderInput.className = PLACEHOLDER_CLASS;
     placeholderInput.setAttribute(PLACEHOLDER_ATTRIBUTE, placeholderName);
     placeholderInput.placeholder = placeholderName;
     placeholderInput.style.width = `${placeholderName.length}ch`;
@@ -110,10 +124,9 @@ function renderChips() {
   chipBarElement.innerHTML = "";
   uniqueTags().forEach(tagName => {
     const chipElement = document.createElement("button");
-    chipElement.className = CHIP_CLASS;
+    chipElement.className = `${CHIP_BASE_CLASSES} ${tagName === state.tag ? CHIP_ACTIVE_CLASS : CHIP_INACTIVE_CLASS}`;
     chipElement.type = "button";
     chipElement.textContent = tagName;
-    chipElement.setAttribute("data-active", tagName === state.tag ? "true" : "false");
     chipElement.onclick = () => selectTag(tagName);
     chipBarElement.appendChild(chipElement);
   });
@@ -121,9 +134,11 @@ function renderChips() {
 
 /** highlightActiveChip updates chip states to reflect the current tag */
 function highlightActiveChip() {
-  selectAllElements(`${CHIP_BAR_SELECTOR} .${CHIP_CLASS}`).forEach(chipElement =>
-    chipElement.setAttribute("data-active", String(chipElement.textContent === state.tag))
-  );
+  selectAllElements(`${CHIP_BAR_SELECTOR} .${CHIP_CLASS}`).forEach(chipElement => {
+    const isActive = chipElement.textContent === state.tag;
+    chipElement.classList.toggle(CHIP_ACTIVE_CLASS, isActive);
+    chipElement.classList.toggle(CHIP_INACTIVE_CLASS, !isActive);
+  });
 }
 
 /** selectTag updates the selected tag and refreshes the grid and chip states */
@@ -140,13 +155,17 @@ function renderGrid() {
   const searchQuery = state.search.trim().toLowerCase();
   const matchingPrompts = promptsList.filter(promptItem => matches(promptItem, searchQuery, state.tag));
   gridElement.innerHTML = "";
-  matchingPrompts.forEach(promptItem => gridElement.appendChild(createCard(promptItem)));
+  matchingPrompts.forEach(promptItem => {
+    const columnElement = document.createElement("div");
+    columnElement.className = GRID_COLUMN_CLASS;
+    columnElement.appendChild(renderCard(promptItem));
+    gridElement.appendChild(columnElement);
+  });
   if (matchingPrompts.length === 0) {
-    const placeholderParagraph = document.createElement("p");
-    placeholderParagraph.style.color = "var(--text-1)";
-    placeholderParagraph.style.gridColumn = "1/-1";
-    placeholderParagraph.textContent = NO_MATCH_MESSAGE;
-    gridElement.appendChild(placeholderParagraph);
+    const columnElement = document.createElement("div");
+    columnElement.className = GRID_NO_MATCH_COLUMN_CLASS;
+    columnElement.textContent = NO_MATCH_MESSAGE;
+    gridElement.appendChild(columnElement);
   }
   highlightHashTarget();
 }
@@ -162,53 +181,62 @@ function highlightHashTarget() {
   }
 }
 
-/** createCard builds a card for a prompt, wiring tag selection */
-function createCard(promptItem) {
-  const cardElement = document.createElement("article");
-  cardElement.className = "card";
+/** renderCard builds a card for a prompt, wiring tag selection */
+function renderCard(promptItem) {
+  const cardElement = document.createElement("div");
+  cardElement.className = CARD_CLASS;
   cardElement.id = promptItem.id;
   cardElement.setAttribute("role", "listitem");
   cardElement.tabIndex = 0;
 
-  const headerElement = document.createElement("div");
-  headerElement.className = "card-header";
-  headerElement.innerHTML = `<span class="tag-dot" aria-hidden="true"></span><h3 class="card-title">${escapeHTML(promptItem.title)}</h3>`;
-  cardElement.appendChild(headerElement);
+  const bodyElement = document.createElement("div");
+  bodyElement.className = CARD_BODY_CLASS;
+  cardElement.appendChild(bodyElement);
+
+  const titleElement = document.createElement("h3");
+  titleElement.className = "card-title fs-6";
+  titleElement.textContent = promptItem.title;
+  bodyElement.appendChild(titleElement);
 
   const tagsContainerElement = document.createElement("div");
-  tagsContainerElement.className = "card-tags";
+  tagsContainerElement.className = "mb-2";
   promptItem.tags.forEach(tagName => {
     const tagElement = document.createElement(SPAN_ELEMENT);
-    tagElement.className = TAG_CLASS;
+    tagElement.className = TAG_BADGE_CLASSES;
     tagElement.textContent = tagName;
     tagElement.addEventListener(CLICK_EVENT, () => selectTag(tagName));
     tagsContainerElement.appendChild(tagElement);
   });
-  cardElement.appendChild(tagsContainerElement);
+  bodyElement.appendChild(tagsContainerElement);
 
   const textElement = document.createElement("pre");
   textElement.className = "card-text";
   textElement.appendChild(renderPromptContent(promptItem.text));
-  cardElement.appendChild(textElement);
+  bodyElement.appendChild(textElement);
 
   const actionsElement = document.createElement("div");
-  actionsElement.className = "card-actions";
+  actionsElement.className = CARD_ACTIONS_CLASS;
   const copyButtonElement = document.createElement("button");
-  copyButtonElement.className = BUTTON_CLASS;
+  copyButtonElement.className = COPY_BUTTON_CLASSES;
   copyButtonElement.type = "button";
+  copyButtonElement.style.width = ACTION_BUTTON_DIMENSION;
+  copyButtonElement.style.height = ACTION_BUTTON_DIMENSION;
   copyButtonElement.setAttribute("aria-label", `${COPY_PROMPT_LABEL_PREFIX} ${promptItem.title}`);
-  copyButtonElement.innerHTML = copyIcon() + `<span>${COPY_LABEL_TEXT}</span>`;
+  copyButtonElement.innerHTML = copyIcon();
   copyButtonElement.onclick = () => copyPrompt(cardElement);
   actionsElement.appendChild(copyButtonElement);
-  cardElement.appendChild(actionsElement);
 
   const shareButtonElement = document.createElement("button");
-  shareButtonElement.className = `${BUTTON_CLASS} ${SHARE_BUTTON_CLASS}`;
+  shareButtonElement.className = SHARE_BUTTON_CLASSES;
   shareButtonElement.type = "button";
+  shareButtonElement.style.width = ACTION_BUTTON_DIMENSION;
+  shareButtonElement.style.height = ACTION_BUTTON_DIMENSION;
   shareButtonElement.setAttribute("aria-label", `${ARIA_SHARE_LABEL} ${promptItem.title}`);
   shareButtonElement.innerHTML = shareIcon();
   shareButtonElement.onclick = () => copyCardUrl(cardElement);
-  cardElement.appendChild(shareButtonElement);
+  actionsElement.appendChild(shareButtonElement);
+
+  cardElement.appendChild(actionsElement);
 
   const toastElement = document.createElement("div");
   toastElement.className = "copied";
@@ -266,23 +294,12 @@ function copyCardUrl(cardElement) {
 
 /** copyIcon returns the SVG for the copy button */
 function copyIcon() {
-  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+  return COPY_ICON_SVG;
 }
 
 /** shareIcon returns the markup for the share icon image element */
 function shareIcon() {
   return `<img src="${SHARE_ICON_IMAGE_SOURCE}" alt="${SHARE_ICON_ALTERNATIVE_TEXT}" />`;
-}
-
-/** escapeHTML escapes special characters for safe HTML insertion */
-function escapeHTML(text) {
-  return text.replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#39;"
-  })[character]);
 }
 
 /** handleSearch persists and renders the grid for the provided searchText */
@@ -303,12 +320,32 @@ function restore() {
   } catch {}
 }
 
+/** applyTheme sets Bootstrap and MDB theme attributes on the document body */
+function applyTheme(themeName) {
+  document.body.setAttribute(DATA_BS_THEME_ATTRIBUTE, themeName);
+  document.body.setAttribute(DATA_MDB_THEME_ATTRIBUTE, themeName);
+}
+
+/** initThemeToggle restores and wires the theme switch for Bootstrap and MDB */
+function initThemeToggle() {
+  const themeToggleElement = selectSingle(`#${THEME_TOGGLE_ID}`);
+  const storedTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) || LIGHT_THEME;
+  applyTheme(storedTheme);
+  themeToggleElement.checked = storedTheme === DARK_THEME;
+  themeToggleElement.addEventListener(INPUT_EVENT, () => {
+    const selectedTheme = themeToggleElement.checked ? DARK_THEME : LIGHT_THEME;
+    applyTheme(selectedTheme);
+    try { localStorage.setItem(THEME_LOCAL_STORAGE_KEY, selectedTheme); } catch {}
+  });
+}
+
 /** init loads prompts and wires search interactions */
 async function init() {
   await loadPrompts();
   restore();
   renderChips();
   renderGrid();
+  initThemeToggle();
   const searchInputElement = selectSingle("#searchInput");
   const clearSearchButton = selectSingle("#clearSearch");
   searchInputElement.value = state.search;
